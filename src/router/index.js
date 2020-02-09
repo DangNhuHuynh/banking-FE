@@ -130,42 +130,34 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: '/permission',
+    path: '/account',
     component: Layout,
-    redirect: '/permission/page',
+    redirect: '/account',
     alwaysShow: true, // will always show the root menu
-    name: 'Permission',
+    name: 'Account',
     meta: {
-      title: 'Permission',
+      title: 'Quản lý tài khoản',
       icon: 'lock',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
       {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
-        name: 'PagePermission',
+        path: '',
+        component: () => import('@/views/account/index'),
+        name: 'AccountIndex',
         meta: {
-          title: 'Page Permission',
+          title: 'Thông tin tài khoản',
           roles: ['admin'] // or you can only set roles in sub nav
         }
       },
       {
-        path: 'directive',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
+        path: ':id',
+        component: () => import('@/views/account/detail'),
+        name: 'AccountDetail',
+        ishidden: true,
         meta: {
-          title: 'Directive Permission'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'role',
-        component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
-        meta: {
-          title: 'Role Permission',
-          roles: ['admin']
+          title: 'Thông tin chi tiết',
+          roles: ['admin'] // or you can only set roles in sub nav
         }
       }
     ]
