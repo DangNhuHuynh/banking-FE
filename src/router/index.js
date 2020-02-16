@@ -100,7 +100,7 @@ export const asyncRoutes = [
         meta: { title: 'Chuyển tiền liên ngân hàng' }
       },
       {
-        path: 'Reciever',
+        path: 'reciever',
         component: () => import('@/views/transaction/reciever'),
         name: 'ListReciever',
         meta: { title: 'Danh sách người nhận' }
