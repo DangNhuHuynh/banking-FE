@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-const apiUrl = 'http://localhost:3001'
+const apiUrl = process.env.VUE_APP_API_URL
 
 export function login(data) {
   return request({

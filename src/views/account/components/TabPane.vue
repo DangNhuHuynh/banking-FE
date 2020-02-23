@@ -1,46 +1,61 @@
 <template>
-  <el-table :data="list" border fit highlight-current-row style="width: 100%">
+  <el-table empty-text="Chưa có giao dịch" :data="data" border fit highlight-current-row style="width: 100%">
     <el-table-column
-      v-loading="loading"
       align="center"
       label="STT"
       width="65"
-      element-loading-text="请给我点时间！"
     >
       <template slot-scope="scope">
-        <span>{{ scope.row.id }}</span>
+        <span>{{ scope.$index + 1 }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column width="180px" align="center" label="Ngày">
+    <el-table-column width="100px" align="center" label="Ngày">
       <template slot-scope="scope">
-        <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        <span>{{ scope.row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column min-width="200px" label="Tài khoản trích tiền">
+    <el-table-column min-width="100px" label="Tài khoản trích tiền">
       <template slot-scope="{row}">
-        <span>{{ row.title }}</span>
-        <el-tag>{{ row.type }}</el-tag>
+        <span>{{ row.remitter }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column width="200px" align="center" label="Đơn vị thụ hưởng">
-      <template slot-scope="scope">
-        <span>{{ scope.row.author }}</span>
-      </template>
-    </el-table-column>
-
-    <el-table-column align="center" label="Số tiền" width="150">
-      <template slot-scope="scope">
-        <span>{{ scope.row.pageviews }}</span>
-      </template>
-    </el-table-column>
-
-    <el-table-column class-name="status-col" label="Trạng thái" width="110">
+    <el-table-column min-width="100px" label="Ngân hàng chuyển">
       <template slot-scope="{row}">
-        <el-tag :type="row.status | statusFilter">
-          {{ row.status }}
+        <span>{{ row.bank_remitter }}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column min-width="100px" align="center" label="Tài khoản nhận">
+      <template slot-scope="scope">
+        <span>{{ scope.row.receiver }}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column min-width="100px" label="Ngân hàng nhận">
+      <template slot-scope="{row}">
+        <span>{{ row.bank_receiver }}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column align="center" label="Số tiền" width="100">
+      <template slot-scope="scope">
+        <span>{{ scope.row.deposit_money }}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column align="center" label="Nội dung" width="200">
+      <template slot-scope="scope">
+        <span>{{ scope.row.description }}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column class-name="status-col" label="Trạng thái" width="100">
+      <template slot-scope="{row}">
+        <el-tag :type="tag_types[row.status_transfer]">
+          {{ transaction_status[row.status_transfer] }}
         </el-tag>
       </template>
     </el-table-column>
@@ -48,48 +63,27 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
+// import { fetchList } from '@/api/article'
 
 export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
   props: {
-    type: {
-      type: String,
-      default: 'CN'
+    data: {
+      type: Array,
+      default: () => ([])
     }
   },
   data() {
     return {
-      list: null,
-      listQuery: {
-        page: 1,
-        limit: 5,
-        type: this.type,
-        sort: '+id'
+      transaction_status: {
+        '-1': 'Không chấp nhận',
+        '0': 'Đang xử lý',
+        '1': 'Thành công'
       },
-      loading: false
-    }
-  },
-  created() {
-    this.getList()
-  },
-  methods: {
-    getList() {
-      this.loading = true
-      this.$emit('create') // for test
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.loading = false
-      })
+      tag_types: {
+        '-1': 'danger',
+        '0': '',
+        '1': 'success'
+      }
     }
   }
 }

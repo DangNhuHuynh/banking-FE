@@ -56,7 +56,7 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'history',
+        path: 'transaction_history',
         component: () => import('@/views/account/history'),
         name: 'History',
         meta: {
