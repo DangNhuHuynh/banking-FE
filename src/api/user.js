@@ -1,18 +1,19 @@
 import request from '@/utils/request'
 
+const apiUrl = process.env.VUE_APP_API_URL
+
 export function login(data) {
   return request({
-    url: '/vue-element-admin/user/login',
+    url: apiUrl + '/auth/login',
     method: 'post',
     data
   })
 }
 
-export function getInfo(token) {
+export function getInfo(username) {
   return request({
-    url: '/vue-element-admin/user/info',
-    method: 'get',
-    params: { token }
+    url: apiUrl + '/accounts/' + username,
+    method: 'get'
   })
 }
 
