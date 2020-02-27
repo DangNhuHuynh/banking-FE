@@ -7,10 +7,6 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -82,22 +78,16 @@ export const asyncRoutes = [
     alwaysShow: true,
     name: 'Transaction',
     meta: {
-      title: 'Chuyển tiền',
+      title: 'Giao dịch',
       icon: 'guide',
       roles: ['admin', 'editor']
     },
     children: [
       {
-        path: 'internal',
-        component: () => import('@/views/transaction/internal'),
-        name: 'TransactionInternal',
-        meta: { title: 'Chuyển tiền nội bộ' }
-      },
-      {
-        path: 'interbank',
-        component: () => import('@/views/transaction/interbank'),
-        name: 'TransactionInterbank',
-        meta: { title: 'Chuyển tiền liên ngân hàng' }
+        path: 'transfer',
+        component: () => import('@/views/transaction/transfer'),
+        name: 'Transfer',
+        meta: { title: 'Chuyển tiền' }
       },
       {
         path: 'reciever',
