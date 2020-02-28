@@ -16,13 +16,13 @@
       </template>
     </el-table-column>
 
-    <el-table-column min-width="100px" label="Tài khoản trích tiền">
+    <el-table-column align="center" min-width="100px" label="Tài khoản trích tiền">
       <template slot-scope="{row}">
         <span>{{ row.remitter }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column min-width="100px" label="Ngân hàng chuyển">
+    <el-table-column align="center" min-width="100px" label="Ngân hàng chuyển">
       <template slot-scope="{row}">
         <span>{{ row.bank_remitter }}</span>
       </template>
@@ -34,7 +34,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column min-width="100px" label="Ngân hàng nhận">
+    <el-table-column min-width="100px" align="center" label="Ngân hàng nhận">
       <template slot-scope="{row}">
         <span>{{ row.bank_receiver }}</span>
       </template>
@@ -52,7 +52,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column class-name="status-col" label="Trạng thái" width="100">
+    <el-table-column align="center" label="Trạng thái" width="100">
       <template slot-scope="{row}">
         <el-tag :type="tag_types[row.status_transfer]">
           {{ transaction_status[row.status_transfer] }}
@@ -63,7 +63,6 @@
 </template>
 
 <script>
-// import { fetchList } from '@/api/article'
 
 export default {
   props: {

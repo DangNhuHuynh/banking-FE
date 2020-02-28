@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
-    <div class="title">LỊCH SỬ GIAO DỊCH</div>
-    <div class="filter-container">
-      <span>Chọn tài khoản</span>
+    <aside style="color:#1874CD"><b>LỊCH SỬ GIAO DỊCH</b></aside>
+    <div style="padding: 10px 0">
+      <span style="margin-right:15px">Chọn tài khoản</span>
       <el-select v-model="accountNumber" placeholder="Số tài khoản" clearable class="filter-item">
         <el-option v-for="item in credits" :key="item.account_number" :label="item.account_number" :value="item.account_number" />
       </el-select>
