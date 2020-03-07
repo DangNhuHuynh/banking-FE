@@ -1,13 +1,74 @@
 <template>
   <div class="app-container">
     <div style="background-color: #EEF1F6; border-radius:5px">
-      <CollapseButton class="collapse-btn" :target="'#collapse-' + index">
-        <h3 style="color:#666; font-size:20px">Tạo nhắc nợ</h3>
+      <CollapseButton class="collapse-btn" :target="'#collapse'">
+        <h2 style="color:#666">Tạo nhắc nợ</h2>
         <span slot="inactive" class="arrow arrow-down" />
         <span slot="active" class="arrow arrow-up" />
       </CollapseButton>
-      <CollapseWrapper :id="'collapse-' + index" class="collapse-wrapper">
-        <p>Collapse content here</p>
+      <CollapseWrapper :id="'collapse'" class="collapse-wrapper">
+        <el-form class="postInfo-container" style="margin-top: 15px">
+          <el-row>
+            <el-col :span="6">
+              <el-form-item
+                label-width="100px"
+                label="Số tài khoản"
+                class="postInfo-container-item"
+              >
+                <el-select
+                  v-model="value"
+                  filterable
+                  allow-create
+                  default-first-option
+                  placeholder="Nhập số tài khoản nợ"
+                >
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+              <el-form-item label-width="70px" label="Họ tên" class="postInfo-container-item">
+                <el-input v-model="postForm.user_name" placeholder="Họ tên người nợ" />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+              <el-form-item label-width="120px" label="Ngân hàng" class="postInfo-container-item">
+                <el-input v-model="postForm.bank_name" placeholder="Tên ngân hàng" />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+              <el-form-item
+                label-width="130px"
+                label="Số tiền (VNĐ)"
+                class="postInfo-container-item"
+              >
+                <el-input v-model="postForm.amount" type="number" placeholder="Nhập số tiền nợ" />
+              </el-form-item>
+            </el-col>
+
+            <el-col>
+              <el-form-item label="Nội dung" class="postInfo-container-item">
+                <el-input
+                  v-model="postForm.content"
+                  :autosize="{ minRows: 3 }"
+                  type="textarea"
+                  placeholder="Nhập nội dung nhắc nợ"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <div class="text-center">
+          <el-button type="primary" @click="createNewDebt">Tạo</el-button>
+        </div>
       </CollapseWrapper>
     </div>
     <el-select
@@ -55,7 +116,7 @@
           <span>{{ row.author }}</span>
           </template>-->
         </el-table-column>
-        <el-table-column v-if="showReviewer" label="Số tiền chuyển" width="110px" align="center">
+        <el-table-column label="Số tiền chuyển" width="130px" align="center">
           <!-- <template slot-scope="{row}">
           <span style="color:red;">{{ row.reviewer }}</span>
           </template>-->
@@ -95,19 +156,44 @@
 import CollapseButton from '../../components/Collapse/CollapseButton'
 import CollapseWrapper from '../../components/Collapse/CollapseWrapper'
 
+const defaultForm = {
+  account_number: '',
+  user_name: '',
+  bank_name: '',
+  amount: '',
+  content: ''
+}
+
 export default {
   components: { CollapseButton, CollapseWrapper },
   data() {
     return {
+      postForm: Object.assign({}, defaultForm),
       listQuery: {
         importance: undefined
       },
+      options: [{
+        value: '1900011',
+        label: '1900011'
+      }, {
+        value: '1900012',
+        label: '1900012'
+      }, {
+        value: '1900013',
+        label: '1900013'
+      }],
+      value: [],
       status: ['Đã thanh toán', 'Chưa thanh toán']
       // sortOptions: [
       //   { label: "ID Ascending", key: "+id" },
       //   { label: "ID Descending", key: "-id" }
       // ]
       // statusOptions: ["published", "draft", "deleted"]
+    }
+  },
+  methods: {
+    createNewDebt() {
+      console.log(123)
     }
   }
 }
