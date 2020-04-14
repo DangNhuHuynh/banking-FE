@@ -67,27 +67,32 @@
           </el-row>
         </el-form>
         <div class="text-center">
-          <el-button type="primary" @click="createNewDebt">Tạo</el-button>
+          <el-button style="width:100px" type="primary" @click="createNewDebt">Gửi</el-button>
         </div>
       </CollapseWrapper>
     </div>
     <el-select
-      v-model="listQuery.importance"
+      id="select"
+      v-model="status"
       placeholder="Chọn tình trạng"
       clearable
-      style="width: 30%; margin-top: 30px; height:45px"
+      style="width: 30%; margin-top: 30px"
     >
       <el-option
-        v-for="item in status"
-        :key="item"
-        :label="item"
-        :value="item"
+        v-for="([key, text]) in Object.entries(debt_status)"
+        :key="key"
+        :label="text"
+        :value="key"
         style="font-size: 17px"
       />
     </el-select>
-    <div class="tab-container" style="background-color: #EEF1F6; border-radius:5px">
+    <div
+      class="tab-container"
+      style="background-color: #EEF1F6; border-radius:5px; padding-bottom:20px"
+    >
       <h2 style="color:#666; padding: 20px 0 0 26px;">Danh sách nợ</h2>
       <el-table
+        :data="filteredDebtList"
         empty-text="Chưa có dữ liệu"
         border
         fit
@@ -96,55 +101,50 @@
       >
         <el-table-column
           label="STT"
-          prop="id"
-          sortable="custom"
           align="center"
           width="80"
           empty-text="Chưa có giao dịch"
         >
-          <!-- <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-          </template>-->
+          <template slot-scope="scope">
+            <span>{{ scope.$index + 1 }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="Số tài khoản" width="150px" align="center">
-          <!-- <template slot-scope="{row}"> -->
-          <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
-          <!-- </template> -->
+          <template slot-scope="scope">
+            <span>{{ scope.row.account_number }}</span>
+          </template>
         </el-table-column>
-        <el-table-column label="Tên người nợ" min-width="110px" align="center">
-          <!-- <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
-          </template>-->
+        <el-table-column label="Tên người nợ" min-width="115px" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.user_name }}</span>
+          </template>
         </el-table-column>
-        <el-table-column label="Số tiền chuyển" width="130px" align="center">
-          <!-- <template slot-scope="{row}">
-          <span style="color:red;">{{ row.reviewer }}</span>
-          </template>-->
+        <el-table-column label="Số tiền chuyển" min-width="140px" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.amount }}</span> VND
+          </template>
         </el-table-column>
         <el-table-column label="Nội dung" min-width="150px" align="center">
-          <!-- <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
-          <el-tag>{{ row.type | typeFilter }}</el-tag>
-          </template>-->
+          <template slot-scope="{row}">
+            <span>{{ row.description }}</span>
+          </template>
         </el-table-column>
-        <el-table-column label="Tình trạng" class-name="status-col" width="100" align="center">
-          <!-- <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
-          </template>-->
+        <el-table-column label="Tình trạng" class-name="status-col" min-width="100" align="center">
+          <template slot-scope="{row}">
+            <el-tag :type="tag_types[row.status]">
+              {{ debt_status[row.status] }}
+            </el-tag>
+          </template>
         </el-table-column>
         <el-table-column
-          label="Actions"
+          label="Lựa chọn"
           align="center"
-          width="230"
+          width="140"
           class-name="small-padding fixed-width"
         >
           <template>
-            <el-button type="primary" size="mini">Edit</el-button>
-            <el-button size="mini" type="success">Publish</el-button>
-            <el-button size="mini">Draft</el-button>
-            <el-button size="mini" type="danger">Delete</el-button>
+            <el-button id="edit"><i class="el-icon-edit" /></el-button>
+            <el-button id="delete"><i class="el-icon-delete" /></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -155,6 +155,7 @@
 <script>
 import CollapseButton from '../../components/Collapse/CollapseButton'
 import CollapseWrapper from '../../components/Collapse/CollapseWrapper'
+import { mapState } from 'vuex'
 
 const defaultForm = {
   account_number: '',
@@ -169,27 +170,48 @@ export default {
   data() {
     return {
       postForm: Object.assign({}, defaultForm),
-      listQuery: {
-        importance: undefined
-      },
-      options: [{
-        value: '1900011',
-        label: '1900011'
-      }, {
-        value: '1900012',
-        label: '1900012'
-      }, {
-        value: '1900013',
-        label: '1900013'
-      }],
+      status: '0',
+      options: [
+        {
+          value: '1900011',
+          label: '1900011'
+        },
+        {
+          value: '1900012',
+          label: '1900012'
+        },
+        {
+          value: '1900013',
+          label: '1900013'
+        }
+      ],
       value: [],
-      status: ['Đã thanh toán', 'Chưa thanh toán']
-      // sortOptions: [
-      //   { label: "ID Ascending", key: "+id" },
-      //   { label: "ID Descending", key: "-id" }
-      // ]
-      // statusOptions: ["published", "draft", "deleted"]
+      debt_status: {
+        '0': 'Chưa thanh toán',
+        '1': 'Đã thanh toán',
+        '2': 'Đã hủy'
+      },
+      tag_types: {
+        '0': 'danger',
+        '1': 'success',
+        '2': 'info'
+      }
     }
+  },
+  computed: {
+    ...mapState({
+      listDebt: state => state.debt.debtList
+    }),
+    filteredDebtList() {
+      const status = parseInt(this.status)
+      if (status === null) {
+        return this.listDebt
+      }
+      return this.listDebt.filter(debt => debt.status === status)
+    }
+  },
+  mounted() {
+    this.$store.dispatch('debt/getListDebt')
   },
   methods: {
     createNewDebt() {
@@ -237,5 +259,21 @@ export default {
 }
 .el-input--medium .el-input__inner {
   padding: 20px 0 0px 26px;
+}
+#edit,#delete{
+  border: none;
+  background-color: transparent;
+  outline: none;
+  padding: 5px;
+  font-size: 18px;
+}
+/deep/ .el-table thead {
+  color: #666666;
+  font-size: 16px;
+  line-height: 40px;
+}
+/deep/ .el-input--medium.el-input--suffix #select {
+  font-size: 18px;
+  height: 50px;
 }
 </style>
