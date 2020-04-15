@@ -15,32 +15,33 @@
                 label="Số tài khoản"
                 class="postInfo-container-item"
               >
-                <el-select
-                  v-model="value"
+                <!-- <el-select
+                  v-model="acc_num"
+                  @blur="getInfoAccount"
                   filterable
                   allow-create
-                  default-first-option
                   placeholder="Nhập số tài khoản nợ"
                 >
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
+                    v-for="item in distintListDebt"
+                    :key="item"
+                    :label="item"
+                    :value="item"
                   />
-                </el-select>
+                </el-select> -->
+                <el-input v-model="acc_num" placeholder="Nhập số tài khoản" @blur="getInfoAccount" />
               </el-form-item>
             </el-col>
 
             <el-col :span="6">
               <el-form-item label-width="70px" label="Họ tên" class="postInfo-container-item">
-                <el-input v-model="postForm.user_name" placeholder="Họ tên người nợ" />
+                <el-input v-model="user_name" placeholder="Họ tên người nợ" />
               </el-form-item>
             </el-col>
 
             <el-col :span="6">
               <el-form-item label-width="120px" label="Ngân hàng" class="postInfo-container-item">
-                <el-input v-model="postForm.bank_name" placeholder="Tên ngân hàng" />
+                <el-input v-model="bank_name" placeholder="Tên ngân hàng" />
               </el-form-item>
             </el-col>
 
@@ -50,18 +51,18 @@
                 label="Số tiền (VNĐ)"
                 class="postInfo-container-item"
               >
-                <el-input v-model="postForm.amount" type="number" placeholder="Nhập số tiền nợ" />
+                <!-- <el-input v-model="postForm.amount" type="number" placeholder="Nhập số tiền nợ" /> -->
               </el-form-item>
             </el-col>
 
             <el-col>
               <el-form-item label="Nội dung" class="postInfo-container-item">
-                <el-input
+                <!-- <el-input
                   v-model="postForm.content"
                   :autosize="{ minRows: 3 }"
                   type="textarea"
                   placeholder="Nhập nội dung nhắc nợ"
-                />
+                /> -->
               </el-form-item>
             </el-col>
           </el-row>
@@ -76,6 +77,7 @@
       v-model="status"
       placeholder="Chọn tình trạng"
       clearable
+      default-first-option
       style="width: 30%; margin-top: 30px"
     >
       <el-option
@@ -97,7 +99,7 @@
         border
         fit
         highlight-current-row
-        style="width: 95%; margin: auto 22px;"
+        style="width: auto; margin: auto 22px;"
       >
         <el-table-column
           label="STT"
@@ -137,17 +139,74 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="Lựa chọn"
           align="center"
-          width="140"
+          width="110"
           class-name="small-padding fixed-width"
         >
-          <template>
-            <el-button id="edit"><i class="el-icon-edit" /></el-button>
-            <el-button id="delete"><i class="el-icon-delete" /></el-button>
+          <template slot-scope="scope">
+            <el-button id="edit" @click="handleEdit(scope)"><i class="el-icon-edit" /></el-button>
+            <el-button id="delete" @click="handleDelete(scope)"><i class="el-icon-delete" /></el-button>
           </template>
         </el-table-column>
       </el-table>
+
+      <el-dialog :visible.sync="dialogVisibleEdit">
+        <el-form :model="editingAccount" label-width="120px" label-position="left">
+          <el-form-item label="Số tài khoản">
+            <el-input v-model="editingAccount.account_number" placeholder="Số tài khoản" disabled />
+          </el-form-item>
+          <el-form-item label="Họ tên">
+            <el-input v-model="editingAccount.user_name" placeholder="Họ tên" />
+          </el-form-item>
+          <el-form-item label="Số tiền (VND)">
+            <el-input v-model="editingAccount.amount" placeholder="VND" />
+          </el-form-item>
+          <el-form-item label="Nội dung">
+            <el-input
+              v-model="editingAccount.description"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              type="textarea"
+              placeholder="Nội dung"
+            />
+          </el-form-item>
+          <el-form-item label="Tình trạng">
+            <el-select
+              v-model="editingAccount.status"
+              placeholder="Tình trạng"
+              clearable
+              style="width:100%"
+            >
+              <el-option
+                v-for="(text, key) in debt_status"
+                :key="'editing-'+key"
+                :label="text"
+                :value="parseInt(key)"
+                style="font-size: 17px"
+              />
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div style="text-align:right;">
+          <el-button type="danger" @click="dialogVisibleEdit=false">Hủy</el-button>
+          <el-button type="primary" @click="confirmEdit">OK</el-button>
+        </div>
+      </el-dialog>
+
+      <el-dialog :visible.sync="dialogVisibleDelete">
+        <el-form label-width="120px" label-position="left">
+          <el-form-item label="Nội dung">
+            <el-input
+              :autosize="{ minRows: 2, maxRows: 4}"
+              type="textarea"
+              placeholder="Nội dung"
+            />
+          </el-form-item>
+        </el-form>
+        <div style="text-align:right;">
+          <el-button type="danger" @click="dialogVisibleDelete=false">Hủy</el-button>
+          <el-button type="primary">Xác nhận xóa</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -156,36 +215,29 @@
 import CollapseButton from '../../components/Collapse/CollapseButton'
 import CollapseWrapper from '../../components/Collapse/CollapseWrapper'
 import { mapState } from 'vuex'
+import { deepClone } from '@/utils'
 
-const defaultForm = {
-  account_number: '',
-  user_name: '',
-  bank_name: '',
-  amount: '',
-  content: ''
-}
+// const defaultForm = {
+//   account_number: '',
+//   user_name: '',
+//   bank_name: '',
+//   amount: '',
+//   content: ''
+// }
 
 export default {
   components: { CollapseButton, CollapseWrapper },
   data() {
     return {
-      postForm: Object.assign({}, defaultForm),
+      // info: Object.assign({}, defaultInfo),
       status: '0',
-      options: [
-        {
-          value: '1900011',
-          label: '1900011'
-        },
-        {
-          value: '1900012',
-          label: '1900012'
-        },
-        {
-          value: '1900013',
-          label: '1900013'
-        }
-      ],
-      value: [],
+      acc_num: '',
+      bank_name: '',
+      user_name: '',
+      dialogVisibleEdit: false,
+      dialogVisibleDelete: false,
+      checkStrictly: false,
+      editingAccount: {},
       debt_status: {
         '0': 'Chưa thanh toán',
         '1': 'Đã thanh toán',
@@ -200,7 +252,8 @@ export default {
   },
   computed: {
     ...mapState({
-      listDebt: state => state.debt.debtList
+      listDebt: state => state.debt.debtList,
+      account: state => state.debt.infoAccount
     }),
     filteredDebtList() {
       const status = parseInt(this.status)
@@ -208,14 +261,44 @@ export default {
         return this.listDebt
       }
       return this.listDebt.filter(debt => debt.status === status)
+    },
+    distintListDebt() {
+      return [...new Set(this.listDebt.map(item => item.account_number))]
     }
   },
   mounted() {
     this.$store.dispatch('debt/getListDebt')
   },
   methods: {
+    getInfoAccount(acc_num) {
+      this.$nextTick(async() => {
+        await this.$store.dispatch('debt/getInfoAccount', this.acc_num)
+
+        if (!Object.keys(this.account).length) {
+          return
+        }
+        this.user_name = this.account.user_name
+        this.bank_name = this.account.bank_name
+      })
+    },
     createNewDebt() {
       console.log(123)
+    },
+    handleEdit(scope) {
+      this.dialogVisibleEdit = true
+      this.checkStrictly = true
+      this.editingAccount = deepClone(scope.row)
+    },
+    async confirmEdit() {
+      this.$store.dispatch('debt/updateDebtInfo', this.editingAccount)
+      this.dialogVisibleEdit = false
+      this.$notify({
+        title: 'Cập nhật thành công!',
+        type: 'success'
+      })
+    },
+    handleDelete(scope) {
+      this.dialogVisibleDelete = true
     }
   }
 }
