@@ -1,6 +1,6 @@
 import { login, logout, getInfo, changePass } from '@/api/user'
 import { getToken, getUsername, setToken, setUsername, removeToken } from '@/utils/auth'
-import router, { resetRouter } from '@/router'
+import { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
@@ -52,7 +52,7 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { roles, username, avatar, introduction } = data
+        const { roles, username, introduction } = data
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
@@ -68,7 +68,7 @@ const actions = {
       })
     })
   },
-  updatePassword({commit}, input) {
+  updatePassword({ commit }, input) {
     return new Promise((resolve, reject) => {
       changePass(input).then(response => {
         const { data } = response
@@ -103,7 +103,6 @@ const actions = {
     })
   }
 }
-
 
 export default {
   namespaced: true,

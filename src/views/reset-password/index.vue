@@ -1,26 +1,9 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
-
       <div class="title-container">
-        <h3 class="title">Đăng Nhập</h3>
+        <h3 class="title">Đặt lại mật khẩu</h3>
       </div>
-
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
-
       <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
         <el-form-item prop="password">
           <span class="svg-container">
@@ -37,7 +20,7 @@
             autocomplete="on"
             @keyup.native="checkCapslock"
             @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
+            @keyup.enter.native="handleConfirm"
           />
           <span class="show-pwd" @click="showPwd">
             <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
@@ -45,51 +28,16 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:45px;" @click.native.prevent="handleLogin">Login</el-button>
-
-      <div style="position:relative">
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Quên mật khẩu?
-        </el-button>
-      </div>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:45px;" @click.native.prevent="handleConfirm">Xác nhận</el-button>
     </el-form>
-
-    <el-dialog title="Quên mật khẩu?" :visible.sync="showDialog">
-      Nhập địa chỉ email để đặt lại mật khẩu!!
-      <el-form style="padding: 20px 0 40px" class="reset-input" autocomplete="on" label-position="left">
-        <el-form-item>
-          <span class="svg-container">
-            <svg-icon icon-class="email" />
-          </span>
-          <el-input
-            ref="Email"
-            v-model="email"
-            placeholder="Email Address"
-            name="email"
-            type="text"
-          />
-        </el-form-item>
-      </el-form>
-      <el-button class="reset-button" type="primary" @click="submitEmailReset">
-        Gửi
-      </el-button>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('The password can not be less than 6 digits'))
@@ -103,16 +51,13 @@ export default {
         password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
-      showDialog: false,
       redirect: undefined,
-      otherQuery: {},
-      email: ''
+      otherQuery: {}
     }
   },
   watch: {
@@ -127,18 +72,12 @@ export default {
       immediate: true
     }
   },
-  created() {
-    // window.addEventListener('storage', this.afterQRScan)
-  },
   mounted() {
     if (this.loginForm.username === '') {
       this.$refs.username.focus()
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
-  },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
     checkCapslock(e) {
@@ -155,7 +94,7 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
+    handleConfirm() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
@@ -172,14 +111,6 @@ export default {
           return false
         }
       })
-    },
-    submitEmailReset(){
-      console.log(123)
-      this.$notify({
-        title: 'Đã gửi mail xác nhận. Vui lòng kiểm tra email !!',
-        type: 'success'
-      })
-      this.showDialog = false
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

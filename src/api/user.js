@@ -31,3 +31,19 @@ export function changePass(data) {
     data
   })
 }
+
+export function resetPassword(data) {
+  return request({
+    url: apiUrl + '/accounts/reset-password',
+    method: 'post',
+    data
+  })
+}
+
+export function confirmReset(data) {
+  return request({
+    url: apiUrl + '/accounts/reset-password/confirm',
+    method: 'post',
+    data
+  })
+}

@@ -14,7 +14,6 @@ export function getUsername() {
 export function setToken(token) {
   // return Cookies.set(TokenKey, token)
   return Cookies.set(TokenKey, token, { expires: 1 / 24 })
-
 }
 
 export function setUsername(username) {
@@ -24,4 +23,8 @@ export function setUsername(username) {
 
 export function removeToken() {
   return Cookies.remove(TokenKey)
+}
+
+export function setResetPasswordToken(token) {
+  return Cookies.set(TokenKey, token, { expires: 1 / 24 })
 }
