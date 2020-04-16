@@ -23,3 +23,11 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function changePass(data) {
+  return request({
+    url: apiUrl + '/accounts/updatePassword',
+    method: 'put',
+    data
+  })
+}

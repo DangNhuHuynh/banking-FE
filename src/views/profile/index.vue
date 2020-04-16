@@ -1,28 +1,30 @@
 <template>
   <div class="app-container">
     <div v-if="user">
-      <el-row :gutter="20">
-
-        <el-col :span="6" :xs="24">
-          <user-card :user="user" />
-        </el-col>
-
+      <el-row style="display: flex; justify-content: center;">
         <el-col :span="18" :xs="24">
           <el-card>
             <el-tabs v-model="activeTab">
-              <el-tab-pane label="Activity" name="activity">
-                <activity />
-              </el-tab-pane>
-              <el-tab-pane label="Timeline" name="timeline">
-                <timeline />
-              </el-tab-pane>
-              <el-tab-pane label="Account" name="account">
-                <account :user="user" />
+              <el-tab-pane label="Đổi mật khẩu" name="changePass">
+                <!-- <account :user="user" /> -->
+                <el-form>
+                  <el-form-item label="Mật khẩu cũ">
+                    <el-input v-model="oldPass" placeholder="Nhập mật khẩu cũ" />
+                  </el-form-item>
+                  <el-form-item label="Mật khẩu mới">
+                    <el-input v-model="newPass" placeholder="Nhập mật khẩu mới" />
+                  </el-form-item>
+                  <el-form-item label="Nhập lại mật khẩu mới">
+                    <el-input v-model="confirmPass" placeholder="Nhập lại mật khẩu mới" />
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="submit">Update</el-button>
+                  </el-form-item>
+                </el-form>
               </el-tab-pane>
             </el-tabs>
           </el-card>
         </el-col>
-
       </el-row>
     </div>
   </div>
@@ -30,38 +32,31 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import UserCard from './components/UserCard'
-import Activity from './components/Activity'
-import Timeline from './components/Timeline'
-import Account from './components/Account'
 
 export default {
   name: 'Profile',
-  components: { UserCard, Activity, Timeline, Account },
   data() {
     return {
       user: {},
-      activeTab: 'activity'
+      activeTab: 'changePass',
+      oldPass: '',
+      newPass: '',
+      confirmPass: ''
     }
   },
-  computed: {
-    ...mapGetters([
-      'name',
-      'avatar',
-      'roles'
-    ])
-  },
-  created() {
-    this.getUser()
-  },
   methods: {
-    getUser() {
-      this.user = {
-        name: this.name,
-        role: this.roles.join(' | '),
-        email: 'admin@test.com',
-        avatar: this.avatar
+    submit() {
+      if(this.newPass === this.confirmPass) {
+        this.$store.dispatch('user/updatePassword', {password: this.oldPass, new_password: this.newPass})
+        this.$notify({
+          title: 'Cập nhật thành công!',
+          type: 'success'
+        })
       }
+      this.$notify({
+          title: 'Cập nhật thất bại!',
+          type: 'error'
+        })
     }
   }
 }
