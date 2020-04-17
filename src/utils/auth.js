@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
 
+const resetTokenKey = 'reset_token'
 const TokenKey = 'Admin-Token'
 const UsernameKey = 'Uname'
 
@@ -26,5 +27,9 @@ export function removeToken() {
 }
 
 export function setResetToken(token) {
-  return Cookies.set(TokenKey, token, { expires: 1 / 24 })
+  return Cookies.set(resetTokenKey, token, { expires: 1 / 24 })
+}
+
+export function getResetToken() {
+  return Cookies.get(resetTokenKey)
 }

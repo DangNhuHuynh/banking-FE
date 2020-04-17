@@ -12,10 +12,33 @@
           <el-input
             :key="passwordType"
             ref="password"
-            v-model="email"
+            v-model="password"
             :type="passwordType"
             placeholder="Password"
             name="password"
+            tabindex="2"
+            autocomplete="on"
+            @keyup.native="checkCapslock"
+            @blur="capsTooltip = false"
+            @keyup.enter.native="handleSubmit"
+          />
+          <span class="show-pwd" @click="showPwd">
+            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          </span>
+        </el-form-item>
+      </el-tooltip>
+      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+        <el-form-item prop="confirmPassword">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="confirmPassword"
+            v-model="confirmPassword"
+            :type="passwordType"
+            placeholder="Confirm Password"
+            name="confirmPassword"
             tabindex="2"
             autocomplete="on"
             @keyup.native="checkCapslock"
@@ -46,10 +69,8 @@ export default {
       }
     }
     return {
-      loginForm: {
-        username: '',
-        password: ''
-      },
+      password: '',
+      confirmPassword: '',
       loginRules: {
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
@@ -57,29 +78,14 @@ export default {
       capsTooltip: false,
       loading: false,
       redirect: undefined,
-      otherQuery: {},
-      email: ''
+      otherQuery: {}
     }
   },
-  // watch: {
-  //   $route: {
-  //     handler: function(route) {
-  //       const query = route.query
-  //       if (query) {
-  //         this.redirect = query.redirect
-  //         this.otherQuery = this.getOtherQuery(query)
-  //       }
-  //     },
-  //     immediate: true
-  //   }
-  // },
-  // mounted() {
-  //   if (this.loginForm.username === '') {
-  //     this.$refs.username.focus()
-  //   } else if (this.loginForm.password === '') {
-  //     this.$refs.password.focus()
-  //   }
-  // },
+  mounted() {
+    if (!this.$router.query.token) {
+      this.$router.push('/login')
+    }
+  },
   methods: {
     checkCapslock(e) {
       const { key } = e
@@ -97,7 +103,11 @@ export default {
     },
     async handleSubmit() {
       if (this.newPass === this.confirmPass) {
-        await this.$store.dispatch('user/resetPassword', this.email)
+        await this.$store.dispatch('user/confirmResetPassword', {
+          password: this.password,
+          confirmPassword: this.confirmPassword,
+          token: this.$route.query.token
+        })
         this.$notify({
           title: 'Cập nhật thành công!',
           message: 'Vui lòng đăng nhập lại!',
