@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+    <el-form ref="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
       <div class="title-container">
         <h3 class="title">Đặt lại mật khẩu</h3>
       </div>
@@ -12,7 +12,7 @@
           <el-input
             :key="passwordType"
             ref="password"
-            v-model="loginForm.password"
+            v-model="email"
             :type="passwordType"
             placeholder="Password"
             name="password"
@@ -20,7 +20,7 @@
             autocomplete="on"
             @keyup.native="checkCapslock"
             @blur="capsTooltip = false"
-            @keyup.enter.native="handleConfirm"
+            @keyup.enter.native="handleSubmit"
           />
           <span class="show-pwd" @click="showPwd">
             <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
@@ -28,7 +28,7 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:45px;" @click.native.prevent="handleConfirm">Xác nhận</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:45px;" @click.native.prevent="handleSubmit">Xác nhận</el-button>
     </el-form>
   </div>
 </template>
@@ -57,28 +57,29 @@ export default {
       capsTooltip: false,
       loading: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      email: ''
     }
   },
-  watch: {
-    $route: {
-      handler: function(route) {
-        const query = route.query
-        if (query) {
-          this.redirect = query.redirect
-          this.otherQuery = this.getOtherQuery(query)
-        }
-      },
-      immediate: true
-    }
-  },
-  mounted() {
-    if (this.loginForm.username === '') {
-      this.$refs.username.focus()
-    } else if (this.loginForm.password === '') {
-      this.$refs.password.focus()
-    }
-  },
+  // watch: {
+  //   $route: {
+  //     handler: function(route) {
+  //       const query = route.query
+  //       if (query) {
+  //         this.redirect = query.redirect
+  //         this.otherQuery = this.getOtherQuery(query)
+  //       }
+  //     },
+  //     immediate: true
+  //   }
+  // },
+  // mounted() {
+  //   if (this.loginForm.username === '') {
+  //     this.$refs.username.focus()
+  //   } else if (this.loginForm.password === '') {
+  //     this.$refs.password.focus()
+  //   }
+  // },
   methods: {
     checkCapslock(e) {
       const { key } = e
@@ -94,33 +95,25 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleConfirm() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+    async handleSubmit() {
+      if (this.newPass === this.confirmPass) {
+        await this.$store.dispatch('user/resetPassword', this.email)
+        this.$notify({
+          title: 'Cập nhật thành công!',
+          message: 'Vui lòng đăng nhập lại!',
+          type: 'success'
+        })
+        await this.$store.dispatch('user/logout')
+        this.$router.push(`/login`)
+        return
+      }
+      this.$notify({
+        title: 'Cập nhật thất bại!',
+        type: 'error'
       })
-    },
-    getOtherQuery(query) {
-      return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== 'redirect') {
-          acc[cur] = query[cur]
-        }
-        return acc
-      }, {})
     }
   }
+
 }
 </script>
 

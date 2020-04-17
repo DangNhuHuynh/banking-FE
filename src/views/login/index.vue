@@ -67,6 +67,7 @@
             placeholder="Email Address"
             name="email"
             type="text"
+            clearable
           />
         </el-form-item>
       </el-form>
@@ -173,13 +174,22 @@ export default {
         }
       })
     },
-    submitEmailReset(){
-      console.log(123)
-      this.$notify({
-        title: 'Đã gửi mail xác nhận. Vui lòng kiểm tra email !!',
-        type: 'success'
-      })
-      this.showDialog = false
+    async submitEmailReset() {
+      // console.log(123)
+      this.$store.dispatch('user/resetPassword', this.email)
+        .then(() => {
+          this.$notify({
+            title: 'Đã gửi mail xác nhận. Vui lòng kiểm tra email !!',
+            type: 'success'
+          })
+          this.showDialog = false
+        })
+        .catch(() => {
+          this.$notify({
+            title: 'Email không chính xác !!',
+            type: 'error'
+          })
+        })
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
