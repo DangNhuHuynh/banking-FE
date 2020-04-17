@@ -21,7 +21,6 @@
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div>
           <i class="el-icon-user-solid" />
-          <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -75,6 +74,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-dropdown-menu--mini .el-dropdown-menu__item {
+  line-height: 34px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
 .navbar {
   height: 50px;
   overflow: hidden;
@@ -130,7 +135,6 @@ export default {
         }
       }
     }
-
     .avatar-container {
       margin-right: 30px;
         .el-icon-caret-bottom {
