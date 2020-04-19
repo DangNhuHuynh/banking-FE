@@ -1,21 +1,16 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Tìm theo CMND" style="width: 240px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input placeholder="Tìm theo CMND" style="width: 240px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-download">
-        Export
-      </el-button>
     </div>
-
     <el-table
       :key="tableKey"
-      v-loading="listLoading"
       :data="listEmployee"
       border
       fit
@@ -23,8 +18,8 @@
       style="width: 100%;"
     >
       <el-table-column label="Mã NV" align="center" min-width="60px">
-        <template slot-scope="{row}">
-          <span> {{ `NV_`+ row.ma_nv }} </span>
+        <template slot-scope="row">
+          <span> NV_{{ row.$index +1 }} </span>
         </template>
       </el-table-column>
       <el-table-column label="Họ tên" min-width="130px" align="center">
@@ -54,17 +49,17 @@
       </el-table-column>
       <el-table-column label="Phòng ban" align="center" min-width="100px">
         <template slot-scope="{row}">
-          <span>{{ row.department }}</span>
+          <span>{{ departmentOptions[row.department] }}</span>
           <!-- <span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>
           <span v-else>0</span> -->
         </template>
       </el-table-column>
       <el-table-column label="Actions" align="center" min-width="90px" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
+        <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             <i class="el-icon-edit" />
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row)">
             <i class="el-icon-delete" />
           </el-button>
         </template>
@@ -101,7 +96,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          Hủy
+          Hủy bỏ
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
           Xác nhận
@@ -109,23 +104,23 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
+    <el-dialog :visible.sync="dialogDelVisible" title="Xóa nhân viên" align="center" class="del-dialog">
+      <p style="font-size: 16px">Bạn chắc chắn xóa?</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
+        <el-button @click="dialogDelVisible = false">
+          Hủy bỏ
+        </el-button>
+        <el-button type="primary" @click="deleteData">Xác nhận</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList, fetchPv } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
-import { parseTime, deepClone } from '@/utils'
+import { deepClone } from '@/utils'
 // import Pagination from '@/components/Pagination'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ComplexTable',
@@ -141,15 +136,6 @@ export default {
       email: '',
       position: '',
       departmentSelected: '',
-      listEmployee: [{
-        ma_nv: '01',
-        name: 'Bánh Bèo',
-        phone: '098765431',
-        id_card: '89076512',
-        email: 'huynh@gmail.com',
-        position: 'Giám đốc',
-        department: 'Kỹ thuật'
-      }],
       departmentOptions: {
         '0': 'Nhân sự',
         '1': 'Kỹ thuật',
@@ -162,15 +148,6 @@ export default {
         id_card: [{ required: true, message: 'Vui lòng nhập số CMND', trigger: 'change' }],
         name: [{ required: true, message: 'Vui lòng nhập họ tên', trigger: 'blur' }]
       },
-      // total: 0,
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 20,
-        // importance: undefined
-        title: undefined,
-        // type: undefined
-      },
       statusOptions: ['published', 'draft', 'deleted'],
       infoEdit: {},
       dialogFormVisible: false,
@@ -179,34 +156,24 @@ export default {
         update: 'Chi tiết',
         create: 'Tạo nhân viên'
       },
-      dialogPvVisible: false,
-      pvData: []
-      // downloadLoading: false
+      dialogDelVisible: false
     }
   },
-  created() {
-    this.getList()
+  computed: {
+    ...mapState({
+      listEmployee: state => state.employee.employeeList
+    })
+  },
+  mounted() {
+    this.$store.dispatch('employee/getList')
   },
   methods: {
-    getList() {
-      this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        // this.list = response.data.items
-        // this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
-    },
     handleFilter() {
       console.log('filter')
-      // this.listQuery.page = 1
-      // this.getList()
     },
     resetTemp() {
       this.infoEdit = {
+        ma_nv: '',
         name: '',
         phone_num: '',
         id_card: '',
@@ -219,12 +186,10 @@ export default {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate()
-      // })
     },
-    createData() {
+    async createData() {
       this.dialogFormVisible = false
+      await this.$store.dispatch('employee/create', this.infoEdit)
       this.$notify({
         title: 'Success',
         message: 'Created Successfully',
@@ -237,7 +202,8 @@ export default {
       this.dialogFormVisible = true
       this.infoEdit = deepClone(row)
     },
-    updateData() {
+    async updateData() {
+      await this.$store.dispatch('employee/update', this.infoEdit)
       this.dialogFormVisible = false
       this.$notify({
         title: 'Success',
@@ -246,29 +212,18 @@ export default {
         duration: 2000
       })
     },
-    handleDelete(row, index) {
+    async handleDelete(row) {
+      this.dialogDelVisible = true
+      this.infoEdit = deepClone(row)
+    },
+    async deleteData() {
+      await this.$store.dispatch('employee/delete', this.infoEdit)
       this.$notify({
         title: 'Success',
         message: 'Delete Successfully',
         type: 'success',
         duration: 2000
       })
-      this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
-    },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
     }
   }
 }
@@ -285,4 +240,10 @@ export default {
   font-weight: bold;
 }
 
+/deep/ .del-dialog > .el-dialog {
+  width: 25%;
+}
+/deep/ .del-dialog > .el-dialog__body {
+  padding: 10px 20px;
+}
 </style>
