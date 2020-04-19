@@ -7,6 +7,7 @@ import article from './article'
 import search from './remote-search'
 import transaction from './transaction'
 import debt from './debt'
+import employee from './administrator/employee'
 
 const mocks = [
   ...user,
@@ -14,7 +15,8 @@ const mocks = [
   ...article,
   ...search,
   ...transaction,
-  ...debt
+  ...debt,
+  ...employee
 ]
 
 // for front mock
