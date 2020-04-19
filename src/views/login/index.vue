@@ -333,7 +333,7 @@ $light_gray:#eee;
   .thirdparty-button {
     position: absolute;
     right: 0;
-    bottom: 10px;
+    bottom: 1px;
     background-color: #6ca5db;
     border-color: #6ca5db;
   }

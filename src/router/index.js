@@ -10,16 +10,35 @@ import Layout from '@/layout'
 
 export const asyncRoutes = [
   {
-    path: '/account',
+    path: '/',
+    component: Layout,
+    alwaysShow: true,
+    name: 'employee',
+    meta: {
+      title: 'Quản lý nhân viên',
+      icon: 'guide',
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/administrator/employee/index'),
+        name: 'list_employee',
+        meta: { title: 'Danh sách nhân viên' }
+      }
+      // {
+      //   path: 'reciever',
+      //   component: () => import('@/views/transaction/reciever'),
+      //   name: 'ListReciever',
+      //   meta: { title: 'Danh sách người nhận' }
+      // }
+    ]
+  },
+  {
+    path: '/',
     component: Layout,
     redirect: '/account',
-    alwaysShow: true, // will always show the root menu
-    name: 'Account',
-    meta: {
-      title: 'Quản lý tài khoản',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
-    },
+    meta: { title: 'Quản lý tài khoản', icon: 'dashboard', affix: true, roles: ['customer'] },
     children: [
       {
         path: '',
@@ -27,7 +46,7 @@ export const asyncRoutes = [
         name: 'AccountIndex',
         meta: {
           title: 'Thông tin tài khoản',
-          roles: ['admin'] // or you can only set roles in sub nav
+          roles: ['customer'] // or you can only set roles in sub nav
         }
       },
       {
@@ -36,17 +55,7 @@ export const asyncRoutes = [
         name: 'History',
         meta: {
           title: 'Lịch sử giao dịch',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: ':id',
-        component: () => import('@/views/account/detail'),
-        name: 'AccountDetail',
-        ishidden: true,
-        meta: {
-          title: 'Thông tin chi tiết',
-          roles: ['admin'] // or you can only set roles in sub nav
+          roles: ['customer'] // or you can only set roles in sub nav
         }
       }
     ]
@@ -59,7 +68,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Giao dịch',
       icon: 'guide',
-      roles: ['admin', 'editor']
+      roles: ['customer']
     },
     children: [
       {
@@ -79,12 +88,16 @@ export const asyncRoutes = [
   {
     path: '/debt',
     component: Layout,
+    meta: {
+      title: 'Quản lý nhắc nợ',
+      icon: 'guide',
+      roles: ['customer']
+    },
     children: [
       {
         path: '',
         component: () => import('@/views/debt-reminder/index'),
-        name: 'List Debt',
-        meta: { title: 'Quản lý nhắc nợ', icon: 'excel', noCache: true }
+        name: 'List Debt'
       }
     ]
   },
@@ -129,19 +142,6 @@ export const constantRoutes = [
     path: '/401',
     component: () => import('@/views/error-page/401'),
     hidden: true
-  },
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
-      }
-    ]
   },
   {
     path: '/profile',

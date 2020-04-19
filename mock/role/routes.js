@@ -32,19 +32,19 @@ export const constantRoutes = [
     component: 'views/error-page/401',
     hidden: true
   },
-  {
-    path: '',
-    component: 'layout/Layout',
-    redirect: 'dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: 'views/dashboard/index',
-        name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
+  // {
+  //   path: '',
+  //   component: 'Layout',
+  //   redirect: '/account',
+  //   children: [
+  //     {
+  //       path: 'account',
+  //       component: 'views/account/index',
+  //       name: 'account',
+  //       meta: { title: 'Quản lí tài khoản', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
   {
     path: '/documentation',
     component: 'layout/Layout',
@@ -81,7 +81,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Permission',
       icon: 'lock',
-      roles: ['admin', 'editor']
+      roles: ['admin', 'customer']
     },
     children: [
       {
