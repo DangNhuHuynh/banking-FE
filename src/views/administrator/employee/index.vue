@@ -1,25 +1,25 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input placeholder="Tìm theo CMND" style="width: 240px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-input v-model="id_card" placeholder="Tìm theo CMND" style="width: 240px;" class="filter-item" />
+      <!-- <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
-      </el-button>
+      </el-button> -->
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
     </div>
     <el-table
-      :key="tableKey"
-      :data="listEmployee"
+      :data="filteredEmployeeList"
+      empty-text="Không có dữ liệu"
       border
       fit
       highlight-current-row
       style="width: 100%;"
     >
       <el-table-column label="Mã NV" align="center" min-width="60px">
-        <template slot-scope="row">
-          <span> NV_{{ row.$index +1 }} </span>
+        <template slot-scope="{row}">
+          <span> {{ row.ma_nv }} </span>
         </template>
       </el-table-column>
       <el-table-column label="Họ tên" min-width="130px" align="center">
@@ -70,8 +70,8 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form :rules="rules" :model="infoEdit" label-position="left" label-width="150px" style="font-weight:bold;width: 500px; margin-left:50px;">
-        <el-form-item v-if="dialogStatus!='create'" label="Mã NV">
-          <el-input v-model="infoEdit.ma_nv" type="text" disabled />
+        <el-form-item label="Mã NV" prop="manv">
+          <el-input v-model="infoEdit.ma_nv" type="text" />
         </el-form-item>
         <el-form-item label="Họ tên" prop="name">
           <el-input v-model="infoEdit.name" type="text" placeholder="Họ tên" />
@@ -117,15 +117,13 @@
 </template>
 
 <script>
-import waves from '@/directive/waves' // waves directive
 import { deepClone } from '@/utils'
 // import Pagination from '@/components/Pagination'
 import { mapState } from 'vuex'
+// import employee from '../../../store/modules/employee'
 
 export default {
-  name: 'ComplexTable',
   // components: { Pagination },
-  directives: { waves },
   data() {
     return {
       tableKey: 0,
@@ -144,8 +142,9 @@ export default {
         '4': 'Điều hành'
       },
       rules: {
-        phone: [{ required: true, message: 'Vui lòng nhập SDT', trigger: 'change' }],
-        id_card: [{ required: true, message: 'Vui lòng nhập số CMND', trigger: 'change' }],
+        manv: [{ required: true, message: 'Vui lòng nhập mã nhân viên', trigger: 'blur' }],
+        phone: [{ required: true, message: 'Vui lòng nhập SDT', trigger: 'blur' }],
+        id_card: [{ required: true, message: 'Vui lòng nhập số CMND', trigger: 'blur' }],
         name: [{ required: true, message: 'Vui lòng nhập họ tên', trigger: 'blur' }]
       },
       statusOptions: ['published', 'draft', 'deleted'],
@@ -162,15 +161,18 @@ export default {
   computed: {
     ...mapState({
       listEmployee: state => state.employee.employeeList
-    })
+    }),
+    filteredEmployeeList() {
+      if (this.id_card === null) {
+        return this.listEmployee
+      }
+      return this.listEmployee.filter(employee => employee.id_card.includes(this.id_card))
+    }
   },
   mounted() {
     this.$store.dispatch('employee/getList')
   },
   methods: {
-    handleFilter() {
-      console.log('filter')
-    },
     resetTemp() {
       this.infoEdit = {
         ma_nv: '',

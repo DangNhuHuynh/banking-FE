@@ -7,6 +7,14 @@ export function getAll() {
   })
 }
 
+export function getInfoByIdCard(id_card) {
+  console.log(id_card)
+  return request({
+    url: '/vue-element-admin/debt/administrator/employee/' + id_card,
+    method: 'get'
+  })
+}
+
 export function createEmployee(data) {
   return request({
     url: `/vue-element-admin/administrator/employee`,

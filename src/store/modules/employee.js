@@ -1,12 +1,16 @@
-import { getAll, createEmployee, updateEmployee, deleteEmployee } from '@/api/administrator/employee'
+import { getAll, createEmployee, updateEmployee, deleteEmployee, getInfoByIdCard } from '@/api/administrator/employee'
 
 const state = {
-  employeeList: []
+  employeeList: [],
+  infoEmployee: {}
 }
 
 const mutations = {
   SET_LIST_EMPOYEE(state, list) {
     state.employeeList = list
+  },
+  SET_INFO_EMPOYEE(state, list) {
+    state.infoEmployee = list
   },
   ADD_EMPOYEE: (state, payload) => {
     state.employeeList.push(payload)
@@ -32,6 +36,18 @@ const actions = {
         const { data } = response
         const list = data.data
         commit('SET_LIST_EMPOYEE', list)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  getEmployee({ commit }, id_card) {
+    return new Promise((resolve, reject) => {
+      getInfoByIdCard(id_card).then(response => {
+        const { data } = response
+        const list = data.data
+        commit('SET_INFO_EMPOYEE', list)
         resolve()
       }).catch(error => {
         reject(error)

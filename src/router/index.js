@@ -91,7 +91,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Quản lý nhắc nợ',
       icon: 'guide',
-      roles: ['customer']
+      roles: ['admin']
     },
     children: [
       {

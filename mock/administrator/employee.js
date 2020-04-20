@@ -42,7 +42,7 @@ export default [
         data: [
           {
             id: 'nv01',
-            ma_nv: '01',
+            ma_nv: 'NV0001',
             name: 'Bánh Bèo',
             phone: '098765431',
             id_card: '89076512',
@@ -53,7 +53,7 @@ export default [
           },
           {
             id: 'nv02',
-            ma_nv: '02',
+            ma_nv: 'NV0002',
             name: 'Bèo Bèo',
             phone: '098765439',
             id_card: '89076513',
