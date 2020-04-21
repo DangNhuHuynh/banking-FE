@@ -36,6 +36,24 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/cross-checking',
+    component: Layout,
+    alwaysShow: true,
+    meta: {
+      title: 'Đối soát',
+      icon: 'excel',
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/administrator/cross-checking/index'),
+        name: 'cross-checking',
+        meta: { title: 'Danh sách giao dịch' }
+      }
+    ]
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/account',
@@ -89,6 +107,9 @@ export const asyncRoutes = [
   {
     path: '/debt',
     component: Layout,
+    alwaysShow: true,
+    redirect: 'index',
+    name: 'debt',
     meta: {
       title: 'Quản lý nhắc nợ',
       icon: 'guide',
@@ -98,7 +119,10 @@ export const asyncRoutes = [
       {
         path: '',
         component: () => import('@/views/debt-reminder/index'),
-        name: 'List Debt'
+        name: 'List Debt',
+        meta: {
+          title: 'Danh sách nhắc nợ',
+        },
       }
     ]
   },
