@@ -12,6 +12,7 @@ export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
+    redirect: '/employee',
     alwaysShow: true,
     name: 'employee',
     meta: {
@@ -21,17 +22,17 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: '',
-        component: () => import('@/views/administrator/employee/index'),
+        path: '/employee',
+        component: () => import('@/views/administrator/employee/info'),
         name: 'list_employee',
         meta: { title: 'Danh sách nhân viên' }
+      },
+      {
+        path: '/employee/account',
+        component: () => import('@/views/administrator/employee/account'),
+        name: 'list_account_employee',
+        meta: { title: 'Danh sách tài khoản' }
       }
-      // {
-      //   path: 'reciever',
-      //   component: () => import('@/views/transaction/reciever'),
-      //   name: 'ListReciever',
-      //   meta: { title: 'Danh sách người nhận' }
-      // }
     ]
   },
   {
@@ -91,7 +92,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Quản lý nhắc nợ',
       icon: 'guide',
-      roles: ['admin']
+      roles: ['customer']
     },
     children: [
       {
