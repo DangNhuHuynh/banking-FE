@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input placeholder="Tìm theo tài khoản" style="width: 240px;" class="filter-item" />
+      <!-- <el-input placeholder="Tìm theo tài khoản" style="width: 240px;" class="filter-item" /> -->
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        Add
+        Tạo tài khoản
       </el-button>
     </div>
     <el-table
@@ -20,11 +20,11 @@
         </template>
       </el-table-column>
       <el-table-column label="Actions" align="center" width="250px" class-name="small-padding fixed-width">
-        <template>
-          <el-button type="primary" size="mini">
+        <template slot-scope="{row}">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
             <i class="el-icon-edit" />
           </el-button>
-          <el-button size="mini" type="danger">
+          <el-button size="mini" type="danger" @click="handleDelete(row)">
             <i class="el-icon-delete" />
           </el-button>
         </template>
@@ -63,7 +63,7 @@
         <el-button @click="dialogDelVisible = false">
           Hủy bỏ
         </el-button>
-        <el-button type="primary">Xác nhận</el-button>
+        <el-button type="primary" @click="deleteData">Xác nhận</el-button>
       </span>
     </el-dialog>
   </div>
@@ -71,6 +71,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { deepClone } from '@/utils'
 
 export default {
   data() {
@@ -120,6 +121,35 @@ export default {
       this.$notify({
         title: 'Success',
         message: 'Created Successfully',
+        type: 'success',
+        duration: 2000
+      })
+    },
+    handleUpdate(row) {
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.accountEmployee = deepClone(row)
+    },
+    async updateData() {
+      this.dialogFormVisible = false
+      await this.$store.dispatch('account/updateAccount', this.accountEmployee)
+      this.$notify({
+        title: 'Success',
+        message: 'Update Successfully',
+        type: 'success',
+        duration: 2000
+      })
+    },
+    handleDelete(row) {
+      this.dialogDelVisible = true
+      this.accountEmployee = deepClone(row)
+    },
+    async deleteData() {
+      this.dialogFormVisible = false
+      await this.$store.dispatch('account/deleteAccount', this.accountEmployee)
+      this.$notify({
+        title: 'Success',
+        message: 'Delete Successfully',
         type: 'success',
         duration: 2000
       })

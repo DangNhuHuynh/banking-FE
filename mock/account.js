@@ -48,6 +48,17 @@ export default [
       }
     }
   },
+  // delete
+  {
+    url: '/vue-element-admin/account/[A-Za-z0-9]',
+    type: 'delete',
+    response: {
+      code: 20000,
+      data: {
+        status: 'success'
+      }
+    }
+  },
   //get list
   {
     url: '/vue-element-admin/account/list',

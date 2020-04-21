@@ -24,3 +24,20 @@ export function createAccount(data) {
     data
   })
 }
+
+export function updateAccount(id, data) {
+  return request({
+    url: `/vue-element-admin/account/${id}`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteAccount(id, data) {
+  return request({
+    url: `/vue-element-admin/account/${id}`,
+    method: 'delete',
+    data
+  })
+}
+
