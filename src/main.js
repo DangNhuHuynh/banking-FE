@@ -17,6 +17,9 @@ import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
 
+import ElementUI from 'element-ui'
+import locale from 'element-ui/lib/locale/lang/en'
+
 import * as filters from './filters' // global filters
 
 /**
@@ -31,6 +34,8 @@ if (process.env.NODE_ENV === 'production') {
   const { mockXHR } = require('../mock')
   mockXHR()
 }
+
+Vue.use(ElementUI, { locale })
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
