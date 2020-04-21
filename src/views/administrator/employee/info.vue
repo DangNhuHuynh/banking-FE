@@ -6,7 +6,7 @@
         Search
       </el-button> -->
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        Add
+        Tạo nhân viên
       </el-button>
     </div>
     <el-table

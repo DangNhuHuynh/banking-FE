@@ -1,4 +1,4 @@
-import { getAll, createAccount, getTransactions } from '@/api/account'
+import { getAll, createAccount, updateAccount, deleteAccount, getTransactions } from '@/api/account'
 
 const state = {
   transactions: [],
@@ -12,6 +12,18 @@ const mutations = {
   },
   ADD_ACCOUNT: (state, payload) => {
     state.accountList.push(payload)
+  },
+  SET_ACCOUNT(state, payload) {
+    const index = state.accountList.findIndex(account => account.id === payload.id)
+    if (index >= 0) {
+      state.accountList.splice(index, 1, payload)
+    }
+  },
+  REMOVE_ACCOUNT(state, payload) {
+    const index = state.accountList.findIndex(account => account.id === payload.id)
+    if (index >= 0) {
+      state.accountList.splice(index, 1)
+    }
   },
   SET_LIST_TRANSACTION(state, list) {
     state.transactions = list
@@ -34,11 +46,40 @@ const actions = {
   createAccount({ commit }, payload) {
     return new Promise((resolve, reject) => {
       createAccount(payload).then(response => {
-
         const { data } = response
         console.log(data.data)
         if (data.data && data.code === 20000) {
           commit('ADD_ACCOUNT', { ...payload, id: data.data.id })
+          resolve()
+          return
+        }
+        reject()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  updateAccount({ commit }, input) {
+    return new Promise((resolve, reject) => {
+      updateAccount(input.id, input).then(response => {
+        const { data } = response
+        if (data && data.code === 20000) {
+          commit('SET_ACCOUNT', input)
+          resolve()
+          return
+        }
+        reject()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  deleteAccount({ commit }, input) {
+    return new Promise((resolve, reject) => {
+      deleteAccount(input.id).then(response => {
+        const { data } = response
+        if (data && data.code === 20000) {
+          commit('REMOVE_ACCOUNT', input)
           resolve()
           return
         }
