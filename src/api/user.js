@@ -10,6 +10,14 @@ export function login(data) {
   })
 }
 
+export function getNewToken(data) {
+  return request({
+    url: apiUrl + '/auth/re-renderToken',
+    method: 'post',
+    data
+  })
+}
+
 export function getInfo(username) {
   return request({
     url: apiUrl + '/accounts/' + username,

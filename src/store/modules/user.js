@@ -1,5 +1,15 @@
-import { login, logout, getInfo, changePass, resetPassword, confirmReset } from '@/api/user'
-import { getToken, getUsername, setToken, setUsername, removeToken, setResetToken, getResetToken } from '@/utils/auth'
+import { login, getNewToken, logout, getInfo, changePass, resetPassword, confirmReset } from '@/api/user'
+import {
+  getToken,
+  getUsername,
+  setToken,
+  setUsername,
+  removeToken,
+  setResetToken,
+  getResetToken,
+  setRefreshToken,
+  getRefreshToken
+} from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const state = {
@@ -37,7 +47,22 @@ const actions = {
         commit('SET_TOKEN', data.token)
         commit('SET_NAME', username)
         setToken(data.token)
+        setRefreshToken(data.refreshToken)
         setUsername(username)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  // Get new token from refresh token
+  fetchNewToken({ commit }) {
+    return new Promise((resolve, reject) => {
+      getNewToken({ refreshToken: getRefreshToken() }).then(response => {
+        const { data } = response
+        commit('SET_TOKEN', data.data.token)
+        setToken(data.data.token)
         resolve()
       }).catch(error => {
         reject(error)
