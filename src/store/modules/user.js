@@ -45,7 +45,7 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
-        commit('SET_NAME', username)
+        commit('SET_NAME', data.username)
         setToken(data.token)
         setRefreshToken(data.refreshToken)
         setUsername(username)
@@ -62,7 +62,9 @@ const actions = {
       getNewToken({ refreshToken: getRefreshToken() }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.data.token)
+        commit('SET_NAME', data.data.username)
         setToken(data.data.token)
+        setUsername(data.data.username)
         resolve()
       }).catch(error => {
         reject(error)
