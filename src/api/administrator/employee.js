@@ -1,8 +1,10 @@
 import request from '@/utils/request'
 
+const apiUrl = process.env.VUE_APP_API_URL
+
 export function getAll() {
   return request({
-    url: '/vue-element-admin/administrator/employee',
+    url: apiUrl + '/employee',
     method: 'get'
   })
 }
@@ -17,7 +19,7 @@ export function getInfoByIdCard(id_card) {
 
 export function createEmployee(data) {
   return request({
-    url: `/vue-element-admin/administrator/employee`,
+    url: apiUrl + `/employee`,
     method: 'post',
     data
   })
@@ -25,7 +27,7 @@ export function createEmployee(data) {
 
 export function updateEmployee(id, data) {
   return request({
-    url: `/vue-element-admin/administrator/employee/${id}`,
+    url: apiUrl + `/employee/${id}`,
     method: 'put',
     data
   })
@@ -33,7 +35,7 @@ export function updateEmployee(id, data) {
 
 export function deleteEmployee(id) {
   return request({
-    url: `/vue-element-admin/administrator/employee/${id}`,
+    url: apiUrl + `/employee/${id}`,
     method: 'delete'
   })
 }

@@ -58,7 +58,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       createEmployee(input).then(response => {
         const { data } = response
-        if (data.data && data.code === 20000) {
+        if (response && response.status === 200) {
           commit('ADD_EMPOYEE', { ...input, id: data.data.id })
           resolve()
           return
@@ -72,8 +72,7 @@ const actions = {
   update({ commit }, input) {
     return new Promise((resolve, reject) => {
       updateEmployee(input.id, input).then(response => {
-        const { data } = response
-        if (data && data.code === 20000) {
+        if (response && response.status === 200) {
           commit('SET_EMPOYEE', input)
           resolve()
           return
@@ -87,8 +86,7 @@ const actions = {
   delete({ commit }, input) {
     return new Promise((resolve, reject) => {
       deleteEmployee(input.id).then(response => {
-        const { data } = response
-        if (data && data.code === 20000) {
+        if (response && response.status === 200) {
           commit('REMOVE_EMPLOYEE', input)
           resolve()
           return

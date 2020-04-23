@@ -220,6 +220,7 @@ export default {
     },
     async deleteData() {
       await this.$store.dispatch('employee/delete', this.infoEdit)
+      this.dialogDelVisible = false
       this.$notify({
         title: 'Success',
         message: 'Delete Successfully',
