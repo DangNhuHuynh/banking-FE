@@ -56,11 +56,55 @@ export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
+    redirect: '/create-account-customer',
+    alwaysShow: true,
+    name: 'createAccount',
+    meta: {
+      // component: () => import('@/views/employee/createAccount'),
+      // path: '/reate-account-customer',
+      title: 'Tạo tài khoản',
+      icon: 'dashboard',
+      roles: ['employee']
+    },
+    children: [
+      {
+        path: '/create-account-customer',
+        component: () => import('@/views/employee/create-account'),
+        name: 'create',
+        meta: { title: 'Tạo tài khoản' }
+      }
+    ]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/recharge-account',
+    alwaysShow: true,
+    name: 'rechargeAccount',
+    meta: {
+      // component: () => import('@/views/employee/createAccount'),
+      // path: '/reate-account-customer',
+      title: 'Nạp tiền',
+      icon: 'guide',
+      roles: ['employee']
+    },
+    children: [
+      {
+        path: '/recharge-account',
+        component: () => import('@/views/employee/recharge-account'),
+        name: 'create',
+        meta: { title: 'Nạp tiền' }
+      }
+    ]
+  },
+  {
+    path: '/',
+    component: Layout,
     redirect: '/account',
     meta: { title: 'Quản lý tài khoản', icon: 'dashboard', affix: true, roles: ['customer'] },
     children: [
       {
-        path: '',
+        path: '/account',
         component: () => import('@/views/account/index'),
         name: 'AccountIndex',
         meta: {
@@ -121,8 +165,8 @@ export const asyncRoutes = [
         component: () => import('@/views/debt-reminder/index'),
         name: 'List Debt',
         meta: {
-          title: 'Danh sách nhắc nợ',
-        },
+          title: 'Danh sách nhắc nợ'
+        }
       }
     ]
   },

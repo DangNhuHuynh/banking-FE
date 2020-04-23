@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container" style="display: flex;">
       <el-select placeholder="Chọn ngân hàng" clearable style="width: 240px; margin-right: 20px;" class="filter-item">
-        <!-- <el-option /> -->
+        <el-option />
       </el-select>
       <el-date-picker
         v-model="date"
@@ -21,53 +21,53 @@
       highlight-current-row
     >
       <el-table-column label="Mã GD" align="center" min-width="60px">
-        <template >
-          <span></span>
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
       <el-table-column label="Tên NHLK" align="center" class-name="small-padding fixed-width">
-        <template >
-          <span></span>
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
       <el-table-column label="Tài khoản chuyển" min-width="110px" align="center" class-name="fixed-width">
-        <template >
-          <span></span>
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
       <el-table-column label="Tài khoản nhận" min-width="100px" align="center" class-name="small-padding fixed-width">
-        <template >
-          <span></span>
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
       <el-table-column label="Ngày GD" min-width="100px" align="center" class-name="fixed-width">
-        <template >
-          <span></span>
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
       <el-table-column label="Loại GD" align="center" class-name="small-padding fixed-width">
-        <template >
-          <span></span>
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
       <el-table-column label="Phí (VND)" align="center" class-name="small-padding fixed-width">
-        <template >
-          <span></span>
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
       <el-table-column label="Tiền thanh toán (VND)" min-width="100px" align="center" class-name="fixed-width">
-        <template >
-          <span></span>
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
       <el-table-column label="Tiền tham chiếu (VND)" min-width="100px" align="center" class-name=" fixed-width">
-        <template >
-          <span></span>
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
       <el-table-column label="Chiết khấu" align="center" class-name="small-padding fixed-width">
-        <template >
-          <span></span>
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
       <el-table-column label="Trạng thái" align="center" class-name="small-padding fixed-width">
@@ -104,7 +104,7 @@ export default {
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

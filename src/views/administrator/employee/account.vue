@@ -12,11 +12,16 @@
       border
       fit
       highlight-current-row
-      style="width: 60%;"
+      style="width: 100%;"
     >
       <el-table-column label="Tài khoản" align="center" min-width="60px">
         <template slot-scope="{row}">
           <span>{{ row.username }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Email" align="center" min-width="60px">
+        <template slot-scope="{row}">
+          <span>{{ row.email }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Actions" align="center" width="250px" class-name="small-padding fixed-width">
