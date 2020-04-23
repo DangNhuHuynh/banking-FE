@@ -4,7 +4,7 @@
       THÔNG TIN TÀI KHOẢN
     </div>
 
-    <el-table :data="formattedCredits" border fit highlight-current-row style="width: 100%">
+    <el-table :data="formattedAccounts" border fit highlight-current-row style="width: 100%">
       <el-table-column prop="account_number" label="Số tài khoản" />
       <el-table-column prop="balance" label="Số dư" />
       <el-table-column prop="type" label="Loại" />
@@ -23,19 +23,20 @@ const ACCOUNT_TYPES = {
 export default {
   computed: {
     ...mapState({
-      credits: state => state.consumerCredits.list
+      accounts: state => state.bankAccount.list
     }),
-    formattedCredits() {
-      return this.credits.map(credit => {
-        return Object.assign({}, credit, {
-          balance: this.numberWithDots(credit.balance) + ' VND',
-          type: ACCOUNT_TYPES[credit.type]
+    formattedAccounts() {
+      return this.accounts.map(account => {
+        console.log(account.type)
+        return Object.assign({}, account, {
+          balance: this.numberWithDots(account.balance) + ' VND',
+          type: ACCOUNT_TYPES[account.type]
         })
       })
     }
   },
   mounted() {
-    this.$store.dispatch('consumerCredits/getList')
+    this.$store.dispatch('bankAccount/getList')
   },
   methods: {
     numberWithDots(number) {

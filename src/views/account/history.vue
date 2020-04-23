@@ -4,7 +4,7 @@
     <div style="padding: 10px 0">
       <span style="margin-right:15px">Chọn tài khoản</span>
       <el-select v-model="accountNumber" placeholder="Số tài khoản" clearable class="filter-item">
-        <el-option v-for="item in credits" :key="item.account_number" :label="item.account_number" :value="item.account_number" />
+        <el-option v-for="item in accounts" :key="item.account_number" :label="item.account_number" :value="item.account_number" />
       </el-select>
     </div>
     <div class="tab-container">
@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     ...mapState({
-      credits: state => state.consumerCredits.list,
+      accounts: state => state.bankAccount.list,
       transactions: state => state.account.transactions
     }),
     filteredTransactions() {
@@ -55,15 +55,17 @@ export default {
     accountNumber() {
       this.$store.dispatch('account/getTransactions', this.accountNumber)
     },
-    credits: {
+    accounts: {
       immediate: true,
       handler() {
-        this.accountNumber = this.credits[0].account_number
+        if (this.accounts[0]) {
+          this.accountNumber = this.accounts[0].account_number
+        }
       }
     }
   },
   mounted() {
-    this.$store.dispatch('consumerCredits/getList')
+    this.$store.dispatch('bankAccount/getList')
   }
 }
 </script>

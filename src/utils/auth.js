@@ -33,6 +33,10 @@ export function removeToken() {
   return Cookies.remove(TokenKey)
 }
 
+export function removeRefreshToken() {
+  return Cookies.remove(refreshTokenKey)
+}
+
 export function setResetToken(token) {
   return Cookies.set(resetTokenKey, token, { expires: 1 / 24 })
 }

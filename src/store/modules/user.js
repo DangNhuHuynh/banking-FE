@@ -8,7 +8,8 @@ import {
   setResetToken,
   getResetToken,
   setRefreshToken,
-  getRefreshToken
+  getRefreshToken,
+  removeRefreshToken
 } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -151,8 +152,10 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         commit('SET_TOKEN', '')
+        commit('SET_NAME', '')
         commit('SET_ROLES', [])
         removeToken()
+        removeRefreshToken()
         resetRouter()
 
         // reset visited views and cached views

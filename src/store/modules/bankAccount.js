@@ -1,11 +1,11 @@
-import { getList } from '@/api/consumerCredit'
+import { getList } from '@/api/bank-account'
 
 const state = {
   list: []
 }
 
 const mutations = {
-  SET_LIST_CREDITS(state, list) {
+  SET_LIST_ACCOUNT(state, list) {
     state.list = list
   }
 }
@@ -16,15 +16,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       getList().then(response => {
         const { data } = response
-        const list = data.data.map(credit => {
-          return {
-            account_number: credit.account_number,
-            balance: credit.balance,
-            type: 2
-          }
-        })
 
-        commit('SET_LIST_CREDITS', list)
+        commit('SET_LIST_ACCOUNT', data.data)
         resolve()
       }).catch(error => {
         reject(error)

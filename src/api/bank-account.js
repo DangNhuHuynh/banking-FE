@@ -4,7 +4,7 @@ const apiUrl = process.env.VUE_APP_API_URL
 
 export function getList() {
   return request({
-    url: apiUrl + '/consumer_credits/me',
+    url: apiUrl + '/account/me',
     method: 'get'
   })
 }

@@ -20,7 +20,7 @@ export function getNewToken(data) {
 
 export function getInfo(username) {
   return request({
-    url: apiUrl + '/accounts/' + username,
+    url: apiUrl + '/user/' + username,
     method: 'get'
   })
 }
@@ -34,7 +34,7 @@ export function logout() {
 
 export function changePass(data) {
   return request({
-    url: apiUrl + '/accounts/updatePassword',
+    url: apiUrl + '/user/updatePassword',
     method: 'put',
     data
   })
@@ -42,7 +42,7 @@ export function changePass(data) {
 
 export function resetPassword(data) {
   return request({
-    url: apiUrl + '/accounts/reset-password',
+    url: apiUrl + '/user/reset-password',
     method: 'post',
     data
   })
@@ -50,7 +50,7 @@ export function resetPassword(data) {
 
 export function confirmReset(data) {
   return request({
-    url: apiUrl + '/accounts/reset-password/confirm',
+    url: apiUrl + '/user/reset-password/confirm',
     method: 'post',
     data
   })
