@@ -76,11 +76,11 @@
         <el-form-item label="Họ tên" prop="name">
           <el-input v-model="infoEdit.name" type="text" placeholder="Họ tên" />
         </el-form-item>
-        <el-form-item label="Số điện thoại" prop="phone">
-          <el-input v-model="infoEdit.phone" placeholder="Số điện thoại" />
-        </el-form-item>
-        <el-form-item label="Email">
+        <el-form-item label="Email" prop="email">
           <el-input v-model="infoEdit.email" placeholder="Email" />
+        </el-form-item>
+        <el-form-item label="Số điện thoại">
+          <el-input v-model="infoEdit.phone" placeholder="Số điện thoại" />
         </el-form-item>
         <el-form-item label="Số CMND" prop="id_card">
           <el-input v-model="infoEdit.id_card" placeholder="Số CMND" />
@@ -137,17 +137,14 @@ export default {
       departmentOptions: {
         '0': 'Nhân sự',
         '1': 'Kỹ thuật',
-        '2': 'Giao dịch',
-        '3': 'Kế toán',
-        '4': 'Điều hành'
+        '2': 'Giao dịch'
       },
       rules: {
         manv: [{ required: true, message: 'Vui lòng nhập mã nhân viên', trigger: 'blur' }],
-        phone: [{ required: true, message: 'Vui lòng nhập SDT', trigger: 'blur' }],
+        email: [{ required: true, message: 'Vui lòng nhập email', trigger: 'blur' }],
         id_card: [{ required: true, message: 'Vui lòng nhập số CMND', trigger: 'blur' }],
         name: [{ required: true, message: 'Vui lòng nhập họ tên', trigger: 'blur' }]
       },
-      statusOptions: ['published', 'draft', 'deleted'],
       infoEdit: {},
       dialogFormVisible: false,
       dialogStatus: '',
@@ -180,8 +177,8 @@ export default {
         phone_num: '',
         id_card: '',
         email: '',
-        position: '',
-        departmentSelected: ''
+        position: 'Nhân viên',
+        departmentSelected: '2'
       }
     },
     handleCreate() {

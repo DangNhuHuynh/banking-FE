@@ -1,10 +1,7 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <!-- <el-input placeholder="Tìm theo tài khoản" style="width: 240px;" class="filter-item" /> -->
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        Tạo tài khoản
-      </el-button>
+    <div style="color:#0089ff; margin: 20px 0">
+      <b> DANH SÁCH TÀI KHOẢN </b>
     </div>
     <el-table
       :data="listAccount"
@@ -46,17 +43,15 @@
         <el-form-item label="Mật khẩu: ">
           <el-input v-model="accountEmployee.password" type="password" placeholder="Mật khẩu" />
         </el-form-item>
-        <el-form-item label="Phân quyền: ">
-          <el-select v-model="account_type" disabled class="filter-item">
-            <el-option v-for="([key, text]) in Object.entries(permissionOptions)" :key="key" :label="text" :value="key" />
-          </el-select>
+        <el-form-item label="Email: ">
+          <el-input v-model="accountEmployee.email" type="text" placeholder="Email" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           Hủy bỏ
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="updateData">
           Xác nhận
         </el-button>
       </div>
@@ -87,11 +82,6 @@ export default {
       username: '',
       password: '',
       account_type: '2',
-      permissionOptions: {
-        '1': 'Khách hàng',
-        '2': 'Nhân viên',
-        '3': 'Admin'
-      },
       accountEmployee: {}
     }
   },
@@ -108,27 +98,8 @@ export default {
       this.accountEmployee = {
         username: '',
         password: '',
-        phone: '',
-        name: '',
-        email: '',
-        refresh_token: '',
-        status: 1,
-        account_type: '2'
+        email: ''
       }
-    },
-    handleCreate() {
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-    },
-    async createData() {
-      this.dialogFormVisible = false
-      await this.$store.dispatch('account/createAccount', this.accountEmployee)
-      this.$notify({
-        title: 'Success',
-        message: 'Created Successfully',
-        type: 'success',
-        duration: 2000
-      })
     },
     handleUpdate(row) {
       this.dialogStatus = 'update'
