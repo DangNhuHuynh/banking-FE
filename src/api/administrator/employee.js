@@ -39,3 +39,25 @@ export function deleteEmployee(id) {
     method: 'delete'
   })
 }
+
+export function getAccount() {
+  return request({
+    url: apiUrl + `/employee/login-user`,
+    method: 'get'
+  })
+}
+
+export function updateAccount(id, data) {
+  return request({
+    url: apiUrl + `/employee/login-user/${id}`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteAccount(id) {
+  return request({
+    url: apiUrl + `/employee/login-user/${id}`,
+    method: 'delete'
+  })
+}

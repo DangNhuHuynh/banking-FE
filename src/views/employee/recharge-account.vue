@@ -5,7 +5,7 @@
         <el-card style="max-width: 730px; width: 100%">
           <div class="title">NẠP TIỀN VÀO TÀI KHOẢN</div>
           <el-form label-position="left" label-width="150px" style="margin:0 50px;">
-            <el-form-item label="Tên đăng nhập: " >
+            <el-form-item label="Tên đăng nhập: ">
               <el-input v-model="username" placeholder="Tên đăng nhập" type="text" clearable />
             </el-form-item>
             <el-form-item label="Số tài khoản: ">
@@ -50,8 +50,8 @@ export default {
       })
     },
     reset() {
-      this.username = '',
-      this.account_number = '',
+      this.username = ''
+      this.account_number = ''
       this.money = ''
     }
   }

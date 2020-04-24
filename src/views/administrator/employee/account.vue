@@ -35,7 +35,7 @@
 
     <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
 
-    <el-dialog title="Tạo tài khoản" :model="accountEmployee" :visible.sync="dialogFormVisible">
+    <el-dialog title="Cập nhật tài khoản" :model="accountEmployee" :visible.sync="dialogFormVisible">
       <el-form label-position="left" label-width="150px" style="font-weight:bold;width: 500px; margin-left:50px;">
         <el-form-item label="Tên tài khoản: ">
           <el-input v-model="accountEmployee.username" type="text" placeholder="Tên tài khoản" />
@@ -57,7 +57,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogDelVisible" title="Xóa nhân viên" align="center" class="del-dialog">
+    <el-dialog :visible.sync="dialogDelVisible" title="Xóa tài khoản" align="center" class="del-dialog">
       <p style="font-size: 16px">Bạn chắc chắn xóa?</p>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogDelVisible = false">
@@ -78,20 +78,20 @@ export default {
     return {
       dialogFormVisible: false,
       dialogDelVisible: false,
-      dialogStatus: '',
       username: '',
       password: '',
+      email: '',
       account_type: '2',
       accountEmployee: {}
     }
   },
   computed: {
     ...mapState({
-      listAccount: state => state.account.accountList
+      listAccount: state => state.employee.accountList
     })
   },
   mounted() {
-    this.$store.dispatch('account/getList', { account_type: this.account_type })
+    this.$store.dispatch('employee/getAccountList')
   },
   methods: {
     resetTemp() {
@@ -102,13 +102,12 @@ export default {
       }
     },
     handleUpdate(row) {
-      this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.accountEmployee = deepClone(row)
     },
     async updateData() {
       this.dialogFormVisible = false
-      await this.$store.dispatch('account/updateAccount', this.accountEmployee)
+      await this.$store.dispatch('employee/updateAccount', this.accountEmployee)
       this.$notify({
         title: 'Success',
         message: 'Update Successfully',
@@ -122,13 +121,14 @@ export default {
     },
     async deleteData() {
       this.dialogFormVisible = false
-      await this.$store.dispatch('account/deleteAccount', this.accountEmployee)
+      await this.$store.dispatch('employee/deleteAccount', this.accountEmployee)
       this.$notify({
         title: 'Success',
         message: 'Delete Successfully',
         type: 'success',
         duration: 2000
       })
+      this.dialogDelVisible = false
     }
   }
 }
