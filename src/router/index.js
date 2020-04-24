@@ -57,7 +57,7 @@ export const asyncRoutes = [
     path: '/',
     component: Layout,
     redirect: '/create-account-customer',
-    alwaysShow: true,
+    alwaysShow: false,
     name: 'createAccount',
     meta: {
       // component: () => import('@/views/employee/createAccount'),
@@ -76,10 +76,9 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/',
+    path: '/recharge-account',
     component: Layout,
-    redirect: '/recharge-account',
-    alwaysShow: true,
+    alwaysShow: false,
     name: 'rechargeAccount',
     meta: {
       // component: () => import('@/views/employee/createAccount'),
@@ -90,7 +89,7 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: '/recharge-account',
+        path: '',
         component: () => import('@/views/employee/recharge-account'),
         name: 'create',
         meta: { title: 'Nạp tiền' }
