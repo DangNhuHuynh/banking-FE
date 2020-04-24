@@ -5,17 +5,17 @@
         <el-card style="max-width: 730px; width: 100%">
           <div class="title">NẠP TIỀN VÀO TÀI KHOẢN</div>
           <el-form label-position="left" label-width="150px" style="margin:0 50px;">
-            <el-form-item label="Tên đăng nhập: ">
-              <el-input placeholder="Tên đăng nhập" type="text" />
+            <el-form-item label="Tên đăng nhập: " >
+              <el-input v-model="username" placeholder="Tên đăng nhập" type="text" clearable />
             </el-form-item>
             <el-form-item label="Số tài khoản: ">
-              <el-input placeholder="Nhập số tài khoản" type="text" />
+              <el-input v-model="account_number" placeholder="Nhập số tài khoản" type="text" clearable />
             </el-form-item>
             <el-form-item label="Số tiền nạp (VNĐ): ">
-              <el-input placeholder="Nhập số tiền nạp" type="text" />
+              <el-input v-model="money" placeholder="Nhập số tiền nạp" type="number" clearable />
             </el-form-item>
             <el-form-item style="display: flex; justify-content: center; margin-bottom: 0">
-              <el-button>
+              <el-button @click="reset">
                 Hủy bỏ
               </el-button>
               <el-button type="primary" @click="submit">Xác nhận nạp</el-button>
@@ -37,10 +37,9 @@ export default {
   name: 'Profile',
   data() {
     return {
-      activeTab: 'createAccount',
-      oldPass: '',
-      newPass: '',
-      confirmPass: ''
+      username: '',
+      account_number: '',
+      money: ''
     }
   },
   methods: {
@@ -49,6 +48,11 @@ export default {
         title: 'Tạo tài khoản thành công!',
         type: 'success'
       })
+    },
+    reset() {
+      this.username = '',
+      this.account_number = '',
+      this.money = ''
     }
   }
 }
