@@ -5,60 +5,98 @@
         <el-card style="max-width: 730px; width: 100%">
           <div class="title">TẠO TÀI KHOẢN</div>
           <div class="sub-title">Thông tin đăng nhập: </div>
-          <el-form label-position="left" label-width="150px" style="margin:0 50px;">
+          <el-form :model="info_customer" label-position="left" label-width="150px" style="margin:0 50px;">
             <el-form-item label="Tên đăng nhập: ">
-              <el-input placeholder="Tên đăng nhập" type="text" />
+              <el-input v-model="info_customer.username" placeholder="Tên đăng nhập" type="text" />
             </el-form-item>
             <el-form-item label="Mật khẩu: ">
-              <el-input placeholder="Nhập mật khẩu" type="text" />
+              <el-input v-model="info_customer.password" placeholder="Nhập mật khẩu" type="text" />
             </el-form-item>
           </el-form>
           <div class="sub-title">Thông tin cá nhân: </div>
           <el-form label-position="left" label-width="150px" style="margin:0 50px;">
             <el-form-item label="Họ tên: ">
-              <el-input placeholder="Họ tên khách hàng" type="text" />
+              <el-input v-model="info_customer.name" placeholder="Họ tên khách hàng" type="text" />
             </el-form-item>
             <el-form-item label="Email: ">
-              <el-input placeholder="Email" type="text" />
+              <el-input v-model="info_customer.email" placeholder="Email" type="text" />
             </el-form-item>
             <el-form-item label="Số điện thoại: ">
-              <el-input placeholder="Số điện thoại" type="password" />
-            </el-form-item>
-          </el-form>
-          <div class="sub-title">Tài khoản thanh toán: </div>
-          <el-form label-position="left" label-width="150px" style="margin:0 50px;">
-            <el-form-item label="Số tài khoản: ">
-              <el-input placeholder="Số tài khoản thanh toán" type="number" disabled />
+              <el-input v-model="info_customer.phone" placeholder="Số điện thoại" />
             </el-form-item>
             <el-form-item class="test" style="display: flex; justify-content: center; margin-bottom: 0">
-              <el-button type="primary" @click="submit">Tạo</el-button>
+              <el-button type="primary" @click="createData">Tạo</el-button>
             </el-form-item>
           </el-form>
         </el-card>
       </el-col>
     </el-row>
+
+    <el-dialog title="Thông tin tài khoản" :model="createCustomer" :visible.sync="dialogFormVisible">
+      <el-form label-position="left" label-width="150px" style="font-weight:bold;width: 500px; margin-left:50px;">
+        <el-form-item label="Số tài khoản: ">
+          <el-input v-model="createCustomer.paymentAccount.account_number" placeholder="Số tài khoản thanh toán" type="number" disabled />
+        </el-form-item>
+        <el-form-item label="Tên đăng nhập: ">
+          <el-input v-model="createCustomer.username" type="text" placeholder="Tên đăng nhập" />
+        </el-form-item>
+        <el-form-item label="Họ tên: ">
+          <el-input v-model="createCustomer.name" type="password" placeholder="Mật khẩu" />
+        </el-form-item>
+        <el-form-item label="Email: ">
+          <el-input v-model="createCustomer.email" type="text" placeholder="Email" />
+        </el-form-item>
+        <el-form-item label="Số điện thoại: ">
+          <el-input v-model="createCustomer.phone" placeholder="Số điện thoại" />
+        </el-form-item>
+        <el-form-item class="test" style="display: flex; justify-content: center; margin-bottom: 10px">
+          <el-button type="primary" @click="resetForm">OK</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
 
 export default {
   name: 'Profile',
   data() {
     return {
       activeTab: 'createAccount',
-      oldPass: '',
-      newPass: '',
-      confirmPass: ''
+      dialogFormVisible: false,
+      createCustomer: {
+        paymentAccount: {}
+      },
+      info_customer: {
+        username: '',
+        password: '',
+        name: '',
+        email: '',
+        phone: ''
+      }
     }
   },
   methods: {
-    async submit() {
+    async createData() {
+      this.dialogFormVisible = true
+      this.createCustomer = await this.$store.dispatch('employee/addCustomer', this.info_customer)
       this.$notify({
-        title: 'Tạo tài khoản thành công!',
-        type: 'success'
+        title: 'Success',
+        message: 'Created Successfully',
+        type: 'success',
+        duration: 2000
       })
+    },
+    resetForm() {
+      this.dialogFormVisible = false
+      this.info_customer = {
+        username: '',
+        password: '',
+        name: '',
+        email: '',
+        phone: ''
+      }
     }
   }
 }
@@ -96,5 +134,15 @@ export default {
   width: 150px;
   font-size: 16px;
   margin-top: 22px;
+}
+
+.el-dialog {
+  max-width: 620px;
+  width: 100%;
+}
+
+.el-dialog__header {
+  background-color: #cae6ff;
+  font-weight: bold;
 }
 </style>

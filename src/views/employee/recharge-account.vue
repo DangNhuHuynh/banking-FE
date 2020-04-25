@@ -4,15 +4,15 @@
       <el-col>
         <el-card style="max-width: 730px; width: 100%">
           <div class="title">NẠP TIỀN VÀO TÀI KHOẢN</div>
-          <el-form label-position="left" label-width="150px" style="margin:0 50px;">
+          <el-form :model="info_recharge" label-position="left" label-width="150px" style="margin:0 50px;">
             <el-form-item label="Tên đăng nhập: ">
-              <el-input v-model="username" placeholder="Tên đăng nhập" type="text" clearable />
+              <el-input v-model="info_recharge.username" placeholder="Tên đăng nhập" type="text" clearable />
             </el-form-item>
             <el-form-item label="Số tài khoản: ">
-              <el-input v-model="account_number" placeholder="Nhập số tài khoản" type="text" clearable />
+              <el-input v-model="info_recharge.account_number" placeholder="Nhập số tài khoản" type="text" clearable />
             </el-form-item>
             <el-form-item label="Số tiền nạp (VNĐ): ">
-              <el-input v-model="money" placeholder="Nhập số tiền nạp" type="number" clearable />
+              <el-input v-model="info_recharge.money" placeholder="Nhập số tiền nạp" type="number" clearable />
             </el-form-item>
             <el-form-item style="display: flex; justify-content: center; margin-bottom: 0">
               <el-button @click="reset">
@@ -37,17 +37,28 @@ export default {
   name: 'Profile',
   data() {
     return {
-      username: '',
-      account_number: '',
-      money: ''
+      info_recharge: {
+        username: '',
+        account_number: '',
+        money: ''
+      }
     }
   },
   methods: {
     async submit() {
-      this.$notify({
-        title: 'Tạo tài khoản thành công!',
-        type: 'success'
-      })
+      if (this.info_recharge.username === '' || this.info_recharge === '') {
+        await this.$store.dispatch('employee/transferMoney', this.info_recharge)
+        this.$notify({
+          title: 'Nạp thành công!',
+          type: 'success'
+        })
+        this.reset()
+      } else {
+        this.$notify({
+          title: 'Nạp thất bại!',
+          type: 'error'
+        })
+      }
     },
     reset() {
       this.username = ''

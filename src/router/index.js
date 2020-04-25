@@ -56,7 +56,7 @@ export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
-    // redirect: '/create-account-customer',
+    redirect: '/create-account-customer',
     alwaysShow: false,
     name: 'createAccount',
     meta: {
