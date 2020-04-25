@@ -87,11 +87,11 @@ export default {
   },
   computed: {
     ...mapState({
-      listAccount: state => state.employee.accountList
+      listAccount: state => state.admin_employee.accountList
     })
   },
   mounted() {
-    this.$store.dispatch('employee/getAccountList')
+    this.$store.dispatch('admin_employee/getAccountList')
   },
   methods: {
     resetTemp() {
@@ -107,7 +107,7 @@ export default {
     },
     async updateData() {
       this.dialogFormVisible = false
-      await this.$store.dispatch('employee/updateAccount', this.accountEmployee)
+      await this.$store.dispatch('admin_employee/updateAccount', this.accountEmployee)
       this.$notify({
         title: 'Success',
         message: 'Update Successfully',
@@ -121,7 +121,7 @@ export default {
     },
     async deleteData() {
       this.dialogFormVisible = false
-      await this.$store.dispatch('employee/deleteAccount', this.accountEmployee)
+      await this.$store.dispatch('admin_employee/deleteAccount', this.accountEmployee)
       this.$notify({
         title: 'Success',
         message: 'Delete Successfully',

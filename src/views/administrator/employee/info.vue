@@ -157,7 +157,7 @@ export default {
   },
   computed: {
     ...mapState({
-      listEmployee: state => state.employee.employeeList
+      listEmployee: state => state.admin_employee.employeeList
     }),
     filteredEmployeeList() {
       if (this.id_card === null) {
@@ -167,7 +167,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('employee/getList')
+    this.$store.dispatch('admin_employee/getList')
   },
   methods: {
     resetTemp() {
@@ -188,7 +188,7 @@ export default {
     },
     async createData() {
       this.dialogFormVisible = false
-      await this.$store.dispatch('employee/create', this.infoEdit)
+      await this.$store.dispatch('admin_employee/create', this.infoEdit)
       this.$notify({
         title: 'Success',
         message: 'Created Successfully',
@@ -202,7 +202,7 @@ export default {
       this.infoEdit = deepClone(row)
     },
     async updateData() {
-      await this.$store.dispatch('employee/update', this.infoEdit)
+      await this.$store.dispatch('admin_employee/update', this.infoEdit)
       this.dialogFormVisible = false
       this.$notify({
         title: 'Success',
@@ -216,7 +216,7 @@ export default {
       this.infoEdit = deepClone(row)
     },
     async deleteData() {
-      await this.$store.dispatch('employee/delete', this.infoEdit)
+      await this.$store.dispatch('admin_employee/delete', this.infoEdit)
       this.dialogDelVisible = false
       this.$notify({
         title: 'Success',
