@@ -56,7 +56,7 @@ export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/create-account-customer',
+    // redirect: '/create-account-customer',
     alwaysShow: false,
     name: 'createAccount',
     meta: {
@@ -93,6 +93,27 @@ export const asyncRoutes = [
         component: () => import('@/views/employee/recharge-account'),
         name: 'create',
         meta: { title: 'Nạp tiền' }
+      }
+    ]
+  },
+  {
+    path: '/transaction-history',
+    component: Layout,
+    alwaysShow: false,
+    name: 'history',
+    meta: {
+      // component: () => import('@/views/employee/createAccount'),
+      // path: '/reate-account-customer',
+      title: 'Lịch sử giao dịch',
+      icon: 'excel',
+      roles: ['employee']
+    },
+    children: [
+      {
+        path: '/transaction-history',
+        component: () => import('@/views/employee/transaction-history'),
+        name: 'history',
+        meta: { title: 'Lịch sử giao dịch' }
       }
     ]
   },
