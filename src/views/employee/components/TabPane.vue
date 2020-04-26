@@ -12,13 +12,13 @@
 
     <el-table-column width="100px" align="center" label="Ngày">
       <template slot-scope="scope">
-        <span>{{ scope.row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        <span>{{ scope.row.createdAt | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
       </template>
     </el-table-column>
 
     <el-table-column align="center" min-width="100px" label="Tài khoản trích tiền">
       <template slot-scope="{row}">
-        <span>{{ row.remitter }}</span>
+        <span>{{ row.remitter_account_number }}</span>
       </template>
     </el-table-column>
 
@@ -30,7 +30,7 @@
 
     <el-table-column min-width="100px" align="center" label="Tài khoản nhận">
       <template slot-scope="scope">
-        <span>{{ scope.row.receiver }}</span>
+        <span>{{ scope.row.receiver_account_number }}</span>
       </template>
     </el-table-column>
 
@@ -54,8 +54,8 @@
 
     <el-table-column align="center" label="Trạng thái" width="100">
       <template slot-scope="{row}">
-        <el-tag :type="tag_types[row.status_transfer]">
-          {{ transaction_status[row.status_transfer] }}
+        <el-tag :type="tag_types[row.status]">
+          {{ transaction_status[row.status] }}
         </el-tag>
       </template>
     </el-table-column>

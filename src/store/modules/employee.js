@@ -1,4 +1,4 @@
-import { create_customer, transfer_money, get_recive_transaction, get_remit_transaction } from '@/api/employee'
+import { create_customer, transfer_money, get_receive_transaction, get_remit_transaction } from '@/api/employee'
 
 const state = {
   customerList: [],
@@ -60,8 +60,21 @@ const actions = {
     })
   },
   getReceiveTransaction({ commit }, input) {
+    console.log('hereeeee')
     return new Promise((resolve, reject) => {
-      get_recive_transaction(input).then(response => {
+      get_receive_transaction(input).then(response => {
+        const { data } = response
+        const list = data.data
+        commit('SET_RECEIVE_LIST', list)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  getRemitTransaction({ commit }, input) {
+    return new Promise((resolve, reject) => {
+      get_remit_transaction(input).then(response => {
         const { data } = response
         const list = data.data
         commit('SET_RECEIVE_LIST', list)

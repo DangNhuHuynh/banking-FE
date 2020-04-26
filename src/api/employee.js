@@ -18,7 +18,7 @@ export function transfer_money(input) {
   })
 }
 
-export function get_recive_transaction(input) {
+export function get_receive_transaction(input) {
   return request({
     url: apiUrl + '/transaction_history/receive',
     method: 'get',

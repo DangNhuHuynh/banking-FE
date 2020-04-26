@@ -2,7 +2,15 @@
   <div class="app-container">
     <el-form :rules="rules" :model="account" label-position="left" label-width="150px" style="display:flex">
       <el-form-item label="Số tài khoản: " prop="accountNumber">
-        <el-input ref="accountNumber" name="accountNumber" v-model="account.accountNumber" placeholder="Nhập số tài khoản" style="width: 300px;" class="filter-item"/>
+        <el-input
+          ref="accountNumber"
+          v-model="account.accountNumber"
+          name="accountNumber"
+          placeholder="Nhập số tài khoản"
+          style="width: 300px;"
+          class="filter-item"
+          @blur="fetchHistory"
+        />
       </el-form-item>
     </el-form>
     <aside style="color:#1874CD"><b>LỊCH SỬ GIAO DỊCH</b></aside>
@@ -50,12 +58,27 @@ export default {
     activeTab: {
       immediate: true,
       handler() {
-        if (this.activeTab === 'recieve') {
-          if (!this.account.accountNumber) {
-            return
-          }
-          this.$store.dispatch('employee/getReceiveTransaction', { account_number: this.account.accountNumber })
-        }
+        this.fetchHistory()
+      }
+    }
+  },
+  methods: {
+    fetchHistory() {
+      console.log('===here')
+      console.log(this.account.accountNumber)
+      if (!this.account.accountNumber) {
+        return
+      }
+
+      console.log(this.activeTab)
+      if (this.activeTab === 'receive') {
+        this.$store.dispatch('employee/getReceiveTransaction', { account_number: this.account.accountNumber })
+        return
+      }
+
+      if (this.activeTab === 'remit') {
+        this.$store.dispatch('employee/getRemitTransaction', { account_number: this.account.accountNumber })
+        return
       }
     }
   }
