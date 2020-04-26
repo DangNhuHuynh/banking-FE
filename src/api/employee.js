@@ -10,10 +10,27 @@ export function create_customer(data) {
   })
 }
 
-export function transfer_money(data) {
+export function transfer_money(input) {
   return request({
     url: apiUrl + '/transfer_money/deposit',
     method: 'post',
-    data
+    params: input
   })
 }
+
+export function get_recive_transaction(input) {
+  return request({
+    url: apiUrl + '/transaction_history/receive',
+    method: 'get',
+    params: input
+  })
+}
+
+export function get_remit_transaction(input) {
+  return request({
+    url: apiUrl + '/transaction_history/remit',
+    method: 'get',
+    params: input
+  })
+}
+

@@ -1,21 +1,16 @@
 <template>
   <div class="app-container">
-    <!-- <div class="filter-container"> -->
-      <el-form :rules="rules" :model="account" label-position="left" label-width="150px" style="display:flex">
-        <el-form-item label="Số tài khoản: " prop="accountNumber">
-          <el-input ref="accountNumber" v-model="account.account_number" placeholder="Nhập số tài khoản" style="width: 300px;" class="filter-item" @keyup.enter.prevent="handleFilter" />
-        </el-form-item>
-        <el-button type="primary" icon="el-icon-search" @click="handleFilter" style="height: fit-content; margin: 0px 20px">
-          Xem
-        </el-button>
-      </el-form>
-    <!-- </div> -->
+    <el-form :rules="rules" :model="account" label-position="left" label-width="150px" style="display:flex">
+      <el-form-item label="Số tài khoản: " prop="accountNumber">
+        <el-input ref="accountNumber" name="accountNumber" v-model="account.accountNumber" placeholder="Nhập số tài khoản" style="width: 300px;" class="filter-item"/>
+      </el-form-item>
+    </el-form>
     <aside style="color:#1874CD"><b>LỊCH SỬ GIAO DỊCH</b></aside>
     <div class="tab-container">
       <el-tabs v-model="activeTab" style="margin-top:15px;" type="border-card">
         <el-tab-pane v-for="item in tabMapOptions" :key="item.key" :label="item.label" :name="item.key">
           <keep-alive>
-            <tab-pane />
+            <tab-pane :data="historyList" />
           </keep-alive>
         </el-tab-pane>
       </el-tabs>
@@ -33,12 +28,12 @@ export default {
   data() {
     return {
       account: {
-        account_number: ''
+        accountNumber: ''
       },
-      activeTab: 'recieve',
+      activeTab: 'receive',
       tabMapOptions: [
-        { label: 'Nhận tiền', key: 'recieve', type: 1 },
-        { label: 'Chuyển tiền', key: 'tranfer', type: 0 },
+        { label: 'Nhận tiền', key: 'receive', type: 1 },
+        { label: 'Chuyển tiền', key: 'remit', type: 0 },
         { label: 'Thanh toán nhắc nợ', key: 'payment', type: 2 }
       ],
       rules: {
@@ -46,9 +41,22 @@ export default {
       }
     }
   },
-  methods: {
-    handleFilter() {
-      console.log(123)
+  computed: {
+    ...mapState({
+      historyList: state => state.employee.historyList
+    })
+  },
+  watch: {
+    activeTab: {
+      immediate: true,
+      handler() {
+        if (this.activeTab === 'recieve') {
+          if (!this.account.accountNumber) {
+            return
+          }
+          this.$store.dispatch('employee/getReceiveTransaction', { account_number: this.account.accountNumber })
+        }
+      }
     }
   }
 }

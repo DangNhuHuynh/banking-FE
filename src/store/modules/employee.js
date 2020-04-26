@@ -1,8 +1,9 @@
-import { create_customer, transfer_money } from '@/api/employee'
+import { create_customer, transfer_money, get_recive_transaction, get_remit_transaction } from '@/api/employee'
 
 const state = {
   customerList: [],
   accountList: [],
+  historyList: [],
   infoTransfer: {}
 }
 
@@ -18,6 +19,12 @@ const mutations = {
   },
   ADD_CUSTOMER: (state, payload) => {
     state.customerList.push(payload)
+  },
+  SET_RECEIVE_LIST(state, list) {
+    state.historyList = list
+  },
+  SET_REMITE_LIST(state, list) {
+    state.historyList = list
   }
 }
 
@@ -51,8 +58,19 @@ const actions = {
         reject(error)
       })
     })
+  },
+  getReceiveTransaction({ commit }, input) {
+    return new Promise((resolve, reject) => {
+      get_recive_transaction(input).then(response => {
+        const { data } = response
+        const list = data.data
+        commit('SET_RECEIVE_LIST', list)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
   }
-
 }
 export default {
   namespaced: true,
