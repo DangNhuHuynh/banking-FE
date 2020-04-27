@@ -120,12 +120,12 @@ export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/account',
+    redirect: '/bank-account',
     meta: { title: 'Quản lý tài khoản', icon: 'dashboard', affix: true, roles: ['customer'] },
     children: [
       {
-        path: '/account',
-        component: () => import('@/views/account/index'),
+        path: 'bank-account',
+        component: () => import('@/views/customer/bank-account'),
         name: 'AccountIndex',
         meta: {
           title: 'Thông tin tài khoản',
@@ -133,8 +133,8 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'transaction_history',
-        component: () => import('@/views/account/history'),
+        path: 'transaction-history',
+        component: () => import('@/views/customer/history'),
         name: 'History',
         meta: {
           title: 'Lịch sử giao dịch',
