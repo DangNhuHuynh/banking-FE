@@ -34,3 +34,10 @@ export function get_remit_transaction(input) {
   })
 }
 
+export function get_debt_transaction(input) {
+  return request({
+    url: apiUrl + '/transaction_history/debt',
+    method: 'get',
+    params: input
+  })
+}

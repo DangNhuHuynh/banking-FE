@@ -42,7 +42,7 @@ export default {
       tabMapOptions: [
         { label: 'Nhận tiền', key: 'receive', type: 1 },
         { label: 'Chuyển tiền', key: 'remit', type: 0 },
-        { label: 'Thanh toán nhắc nợ', key: 'payment', type: 2 }
+        { label: 'Thanh toán nhắc nợ', key: 'debt', type: 2 }
       ],
       rules: {
         accountNumber: [{ required: true, message: 'Vui lòng nhập số tài khoản để xem lịch sửa giao dịch', trigger: 'blur' }]
@@ -64,21 +64,28 @@ export default {
   },
   methods: {
     fetchHistory() {
-      console.log('===here')
+      // console.log('===here')
       console.log(this.account.accountNumber)
       if (!this.account.accountNumber) {
         return
       }
 
       console.log(this.activeTab)
+
       if (this.activeTab === 'receive') {
         this.$store.dispatch('employee/getReceiveTransaction', { account_number: this.account.accountNumber })
-        return
+      } else if (this.activeTab === 'remit') {
+        this.$store.dispatch('employee/getRemitTransaction', { account_number: this.account.accountNumber })
+      } else {
+        this.$store.dispatch('employee/getDebtTransaction', { account_number: this.account.accountNumber })
       }
 
-      if (this.activeTab === 'remit') {
-        this.$store.dispatch('employee/getRemitTransaction', { account_number: this.account.accountNumber })
-        return
+      if (!this.historyList.length) {
+        this.$notify({
+          title: 'Không có giao dịch!!',
+          message: '',
+          type: 'info'
+        })
       }
     }
   }

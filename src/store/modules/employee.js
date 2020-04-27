@@ -1,4 +1,4 @@
-import { create_customer, transfer_money, get_receive_transaction, get_remit_transaction } from '@/api/employee'
+import { create_customer, transfer_money, get_receive_transaction, get_remit_transaction, get_debt_transaction } from '@/api/employee'
 
 const state = {
   customerList: [],
@@ -20,10 +20,7 @@ const mutations = {
   ADD_CUSTOMER: (state, payload) => {
     state.customerList.push(payload)
   },
-  SET_RECEIVE_LIST(state, list) {
-    state.historyList = list
-  },
-  SET_REMITE_LIST(state, list) {
+  SET_HISTORY_LIST(state, list) {
     state.historyList = list
   }
 }
@@ -60,12 +57,11 @@ const actions = {
     })
   },
   getReceiveTransaction({ commit }, input) {
-    console.log('hereeeee')
     return new Promise((resolve, reject) => {
       get_receive_transaction(input).then(response => {
         const { data } = response
         const list = data.data
-        commit('SET_RECEIVE_LIST', list)
+        commit('SET_HISTORY_LIST', list)
         resolve()
       }).catch(error => {
         reject(error)
@@ -77,7 +73,19 @@ const actions = {
       get_remit_transaction(input).then(response => {
         const { data } = response
         const list = data.data
-        commit('SET_RECEIVE_LIST', list)
+        commit('SET_HISTORY_LIST', list)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  getDebtTransaction({ commit }, input) {
+    return new Promise((resolve, reject) => {
+      get_debt_transaction(input).then(response => {
+        const { data } = response
+        const list = data.data
+        commit('SET_HISTORY_LIST', list)
         resolve()
       }).catch(error => {
         reject(error)
