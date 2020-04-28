@@ -12,13 +12,13 @@
 
     <el-table-column width="100px" align="center" label="Ngày">
       <template slot-scope="scope">
-        <span>{{ scope.row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        <span>{{ scope.row.createdAt | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
       </template>
     </el-table-column>
 
     <el-table-column align="center" min-width="100px" label="Tài khoản trích tiền">
       <template slot-scope="{row}">
-        <span>{{ row.remitter }}</span>
+        <span>{{ row.remitter_account_number }}</span>
       </template>
     </el-table-column>
 
@@ -30,7 +30,7 @@
 
     <el-table-column min-width="100px" align="center" label="Tài khoản nhận">
       <template slot-scope="scope">
-        <span>{{ scope.row.receiver }}</span>
+        <span>{{ scope.row.receiver_account_number }}</span>
       </template>
     </el-table-column>
 
@@ -40,22 +40,28 @@
       </template>
     </el-table-column>
 
-    <el-table-column align="center" label="Số tiền" width="100">
+    <el-table-column align="center" label="Số tiền" width="150">
       <template slot-scope="scope">
-        <span>{{ scope.row.deposit_money }}</span>
+        <span> {{ numberWithDots(scope.row.deposit_money) }} VNĐ</span>
       </template>
     </el-table-column>
 
-    <el-table-column align="center" label="Nội dung" width="200">
+    <el-table-column align="center" label="Phí GD" width="150">
+      <template slot-scope="scope">
+        <span>{{ numberWithDots(scope.row.billing_cost) }} VNĐ</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column align="center" label="Nội dung" max-width="200">
       <template slot-scope="scope">
         <span>{{ scope.row.description }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column align="center" label="Trạng thái" width="100">
+    <el-table-column align="center" label="Trạng thái" max-width="100">
       <template slot-scope="{row}">
-        <el-tag :type="tag_types[row.status_transfer]">
-          {{ transaction_status[row.status_transfer] }}
+        <el-tag :type="tag_types[row.status]">
+          {{ transaction_status[row.status] }}
         </el-tag>
       </template>
     </el-table-column>
@@ -83,6 +89,18 @@ export default {
         '0': '',
         '1': 'success'
       }
+    }
+  },
+  methods: {
+    numberWithDots(number) {
+      if (!number) {
+        return 0
+      }
+      const arr = number.toString().split('.')
+      if (arr.length === 2) {
+        return arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + arr[1]
+      }
+      return arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
   }
 }

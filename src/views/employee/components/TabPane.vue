@@ -42,7 +42,7 @@
 
     <el-table-column align="center" label="Số tiền" width="100">
       <template slot-scope="scope">
-        <span>{{ scope.row.deposit_money }}</span>
+        <span>{{ numberWithDots(scope.row.deposit_money) }} VNĐ</span>
       </template>
     </el-table-column>
 
@@ -83,6 +83,18 @@ export default {
         '0': '',
         '1': 'success'
       }
+    }
+  },
+  methods: {
+    numberWithDots(number) {
+      if (!number) {
+        return 0
+      }
+      const arr = number.toString().split('.')
+      if (arr.length === 2) {
+        return arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + arr[1]
+      }
+      return arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
   }
 }
