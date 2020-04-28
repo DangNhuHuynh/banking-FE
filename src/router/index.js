@@ -156,7 +156,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'transfer',
-        component: () => import('@/views/transaction/transfer'),
+        component: () => import('@/views/customer/transaction'),
         name: 'Transfer',
         meta: { title: 'Chuyển tiền' }
       },
