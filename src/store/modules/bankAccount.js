@@ -12,9 +12,9 @@ const mutations = {
 
 const actions = {
   // user login
-  getList({ commit }) {
+  getList({ commit }, input) {
     return new Promise((resolve, reject) => {
-      getList().then(response => {
+      getList(input).then(response => {
         const { data } = response
 
         commit('SET_LIST_ACCOUNT', data.data)
