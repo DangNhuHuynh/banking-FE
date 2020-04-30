@@ -43,6 +43,9 @@
               <el-input v-model="info_transaction.description" placeholder="Nhập nội dung chuyển tiền" type="textarea" :autosize="{ minRows: 3 }" />
             </el-form-item>
             <el-form-item label="Phí chuyển tiền: ">
+              <el-input v-model="info_transaction.billing_cost" placeholder="Nhập nội dung chuyển tiền" disabled type="textarea" :autosize="{ minRows: 3 }" />
+            </el-form-item>
+            <el-form-item label="Người chịu phí: ">
               <el-select v-model="info_transaction.payer_selected" placeholder="Người chuyển trả" clearable class="filter-item">
                 <el-option
                   v-for="([key, text]) in Object.entries(fee_payer)"
@@ -52,7 +55,9 @@
                 />
               </el-select>
             </el-form-item>
-
+            <!-- <el-form-item label="OTP: ">
+              <el-input placeholder="Nhập số tiền chuyển" type="text" />
+            </el-form-item> -->
             <el-form-item class="test" style="display: flex; justify-content: center; margin-bottom: 0">
               <el-button type="primary" @click="confirm">Xác nhận</el-button>
             </el-form-item>
@@ -84,6 +89,7 @@ export default {
         name_saved: '',
         transfer_amount: '',
         description: '',
+        billing_cost: '1.100 vnđ',
         payer_selected: '0'
       }
     }
