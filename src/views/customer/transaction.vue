@@ -7,13 +7,13 @@
           <div class="sub-title">Thông tin người chuyển </div>
           <el-form :model="info_transaction" label-position="left" label-width="200px" style="margin:0 50px;">
             <el-form-item label="Tài khoản nguồn: ">
-              <el-select v-model="info_transaction.receiver_account_number" placeholder="Số tài khoản" clearable>
+              <el-select :value="paymentAccount.account_number" placeholder="Số tài khoản" readonly>
                 <el-option v-for="item in accounts" :key="item.account_number" :label="item.account_number" :value="item.account_number" />
               </el-select>
             </el-form-item>
             <el-form-item label="Số dư khả dụng: ">
               <template>
-                <span>1999999 VND</span>
+                <span>{{ paymentAccount.balance | toThousandFilter }} VND</span>
               </template>
             </el-form-item>
           </el-form>
@@ -74,9 +74,6 @@ export default {
   name: 'Profile',
   data() {
     return {
-      account: {
-        accountNumber: {}
-      },
       saveInfoReceiver: false,
       fee_payer: {
         '0': 'Người chuyển trả',
@@ -84,7 +81,6 @@ export default {
       },
       info_transaction: {
         receiver_account_number: '',
-        transfer_account_number: '',
         receiver_name: '',
         name_saved: '',
         transfer_amount: '',
@@ -97,12 +93,22 @@ export default {
   computed: {
     ...mapState({
       accounts: state => state.bankAccount.list
-    })
+    }),
+    paymentAccount() {
+      if (!this.accounts.length) {
+        return {}
+      }
+
+      return this.accounts[0]
+    }
   },
   mounted() {
-    this.$store.dispatch('bankAccount/getList')
+    this.$store.dispatch('bankAccount/getList', { type: 1 }) // only get payment account
   },
   methods: {
+    async fetchReceiverInfo() {
+
+    },
     async confirm() {
       this.$notify({
         title: 'Success',
