@@ -187,11 +187,19 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: '',
-        component: () => import('@/views/customer/debt-reminder'),
-        name: 'List Debt',
+        path: 'personal-debt',
+        component: () => import('@/views/customer/debt-management/personal-debt'),
+        name: 'personal-debt',
         meta: {
-          title: 'Danh sách nhắc nợ'
+          title: 'Nợ phải trả'
+        }
+      },
+      {
+        path: 'debt-receivable ',
+        component: () => import('@/views/customer/debt-management/debt-receivable'),
+        name: 'debt-receivable',
+        meta: {
+          title: 'Nợ phải thu'
         }
       }
     ]

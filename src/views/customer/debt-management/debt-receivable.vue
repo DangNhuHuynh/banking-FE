@@ -7,7 +7,7 @@
         <span slot="active" class="arrow arrow-up" />
       </CollapseButton>
       <CollapseWrapper :id="'collapse'" class="collapse-wrapper">
-        <el-form class="postInfo-container" style="margin-top: 15px">
+        <el-form :model="debtInfo" class="postInfo-container" style="margin-top: 15px">
           <el-row>
             <el-col :span="6">
               <el-form-item
@@ -15,12 +15,11 @@
                 label="Số tài khoản"
                 class="postInfo-container-item"
               >
-                <!-- <el-select
-                  v-model="acc_num"
-                  @blur="getInfoAccount"
-                  filterable
-                  allow-create
+                <el-select
+                  v-model="debtInfo.debit_account_number"
                   placeholder="Nhập số tài khoản nợ"
+                  allow-create
+                  filterable
                 >
                   <el-option
                     v-for="item in distintListDebt"
@@ -28,20 +27,19 @@
                     :label="item"
                     :value="item"
                   />
-                </el-select> -->
-                <el-input v-model="acc_num" placeholder="Nhập số tài khoản" @blur="getInfoAccount" />
+                </el-select>
               </el-form-item>
             </el-col>
 
             <el-col :span="6">
               <el-form-item label-width="70px" label="Họ tên" class="postInfo-container-item">
-                <el-input v-model="user_name" placeholder="Họ tên người nợ" />
+                <el-input v-model="debtInfo.name" placeholder="Họ tên người nợ" />
               </el-form-item>
             </el-col>
 
             <el-col :span="6">
               <el-form-item label-width="120px" label="Ngân hàng" class="postInfo-container-item">
-                <el-input v-model="bank_name" placeholder="Tên ngân hàng" />
+                <el-input v-model="debtInfo.bank_name" placeholder="Tên ngân hàng" />
               </el-form-item>
             </el-col>
 
@@ -51,18 +49,18 @@
                 label="Số tiền (VNĐ)"
                 class="postInfo-container-item"
               >
-                <!-- <el-input v-model="postForm.amount" type="number" placeholder="Nhập số tiền nợ" /> -->
+                <el-input v-model="debtInfo.amount_owned" type="number" placeholder="Nhập số tiền nợ" />
               </el-form-item>
             </el-col>
 
             <el-col>
               <el-form-item label="Nội dung" class="postInfo-container-item">
-                <!-- <el-input
-                  v-model="postForm.content"
+                <el-input
+                  v-model="debtInfo.description"
                   :autosize="{ minRows: 3 }"
                   type="textarea"
                   placeholder="Nhập nội dung nhắc nợ"
-                /> -->
+                />
               </el-form-item>
             </el-col>
           </el-row>
@@ -111,19 +109,19 @@
             <span>{{ scope.$index + 1 }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Số tài khoản" width="150px" align="center">
+        <el-table-column label="Số tài khoản nợ" width="150px" align="center">
           <template slot-scope="scope">
-            <span>{{ scope.row.account_number }}</span>
+            <span>{{ scope.row.debt_account_number }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Tên người nợ" min-width="115px" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.user_name }}</span>
+            <span>{{ row.debt_reminder_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Số tiền chuyển" min-width="140px" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.amount }}</span> VND
+            <span>{{ numberWithDots(row.money) }}</span> VND
           </template>
         </el-table-column>
         <el-table-column label="Nội dung" min-width="150px" align="center">
@@ -151,19 +149,19 @@
       </el-table>
 
       <el-dialog :visible.sync="dialogVisibleEdit">
-        <el-form :model="editingAccount" label-width="120px" label-position="left">
+        <el-form :model="editingDebtInfo" label-width="120px" label-position="left">
           <el-form-item label="Số tài khoản">
-            <el-input v-model="editingAccount.account_number" placeholder="Số tài khoản" disabled />
+            <el-input v-model="editingDebtInfo.debit_account_number" placeholder="Số tài khoản" disabled />
           </el-form-item>
           <el-form-item label="Họ tên">
-            <el-input v-model="editingAccount.user_name" placeholder="Họ tên" />
+            <el-input v-model="editingDebtInfo.name" placeholder="Họ tên" />
           </el-form-item>
           <el-form-item label="Số tiền (VND)">
-            <el-input v-model="editingAccount.amount" placeholder="VND" />
+            <el-input v-model="editingDebtInfo.amount_owned" placeholder="VND" />
           </el-form-item>
           <el-form-item label="Nội dung">
             <el-input
-              v-model="editingAccount.description"
+              v-model="editingDebtInfo.description"
               :autosize="{ minRows: 2, maxRows: 4}"
               type="textarea"
               placeholder="Nội dung"
@@ -171,7 +169,7 @@
           </el-form-item>
           <el-form-item label="Tình trạng">
             <el-select
-              v-model="editingAccount.status"
+              v-model="editingDebtInfo.status"
               placeholder="Tình trạng"
               clearable
               style="width:100%"
@@ -212,32 +210,27 @@
 </template>
 
 <script>
-import CollapseButton from '../../components/Collapse/CollapseButton'
-import CollapseWrapper from '../../components/Collapse/CollapseWrapper'
+import CollapseButton from '../../../components/Collapse/CollapseButton'
+import CollapseWrapper from '../../../components/Collapse/CollapseWrapper'
 import { mapState } from 'vuex'
 import { deepClone } from '@/utils'
-
-// const defaultForm = {
-//   account_number: '',
-//   user_name: '',
-//   bank_name: '',
-//   amount: '',
-//   content: ''
-// }
 
 export default {
   components: { CollapseButton, CollapseWrapper },
   data() {
     return {
-      // info: Object.assign({}, defaultInfo),
+      debtInfo: {
+        debit_account_number: '',
+        name: '',
+        bank_name: '',
+        amount_owned: '',
+        description: ''
+      },
       status: '0',
-      acc_num: '',
-      bank_name: '',
-      user_name: '',
       dialogVisibleEdit: false,
       dialogVisibleDelete: false,
       checkStrictly: false,
-      editingAccount: {},
+      editingDebtInfo: {},
       debt_status: {
         '0': 'Chưa thanh toán',
         '1': 'Đã thanh toán'
@@ -251,7 +244,7 @@ export default {
   },
   computed: {
     ...mapState({
-      listDebt: state => state.debt.debtList,
+      listDebt: state => state.debt_reminder.debtList,
       account: state => state.debt.infoAccount
     }),
     filteredDebtList() {
@@ -266,9 +259,19 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('debt/getListDebt')
+    this.$store.dispatch('debt_reminder/getList', { type: '0' })
   },
   methods: {
+    numberWithDots(number) {
+      if (!number) {
+        return 0
+      }
+      const arr = number.toString().split('.')
+      if (arr.length === 2) {
+        return arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + arr[1]
+      }
+      return arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    },
     getInfoAccount(acc_num) {
       this.$nextTick(async() => {
         await this.$store.dispatch('debt/getInfoAccount', this.acc_num)
@@ -286,10 +289,10 @@ export default {
     handleEdit(scope) {
       this.dialogVisibleEdit = true
       this.checkStrictly = true
-      this.editingAccount = deepClone(scope.row)
+      this.editingDebtInfo = deepClone(scope.row)
     },
     async confirmEdit() {
-      this.$store.dispatch('debt/updateDebtInfo', this.editingAccount)
+      this.$store.dispatch('debt/updateDebtInfo', this.editingDebtInfo)
       this.dialogVisibleEdit = false
       this.$notify({
         title: 'Cập nhật thành công!',
