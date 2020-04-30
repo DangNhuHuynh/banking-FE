@@ -240,8 +240,7 @@ export default {
       editingAccount: {},
       debt_status: {
         '0': 'Chưa thanh toán',
-        '1': 'Đã thanh toán',
-        '2': 'Đã hủy'
+        '1': 'Đã thanh toán'
       },
       tag_types: {
         '0': 'danger',

@@ -158,7 +158,13 @@ export const asyncRoutes = [
         path: 'transfer',
         component: () => import('@/views/customer/transaction'),
         name: 'Transfer',
-        meta: { title: 'Chuyển tiền' }
+        meta: { title: 'Chuyển tiền nội bộ' }
+      },
+      {
+        path: 'transfer',
+        component: () => import('@/views/customer/transaction'),
+        name: 'Transfer',
+        meta: { title: 'Chuyển tiền liên ngân hàng' }
       },
       {
         path: 'reciever',
@@ -182,7 +188,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '',
-        component: () => import('@/views/debt-reminder/index'),
+        component: () => import('@/views/customer/debt-reminder'),
         name: 'List Debt',
         meta: {
           title: 'Danh sách nhắc nợ'

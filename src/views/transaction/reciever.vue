@@ -1,18 +1,40 @@
 <template>
   <div class="app-container">
-    <aside style="color:#1874CD">DANH SÁCH NGƯỜI NHẬN</aside>
-    <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Tên người nhận" style="width: 400px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
-      </el-button>
+    <div style="background-color: #EEF1F6; border-radius:5px">
+      <CollapseButton class="collapse-btn" :target="'#collapse'">
+        <h2 style="color:#666">Thêm người nhận</h2>
+        <span slot="inactive" class="arrow arrow-down" />
+        <span slot="active" class="arrow arrow-up" />
+      </CollapseButton>
+      <CollapseWrapper :id="'collapse'" class="collapse-wrapper">
+        <el-form class="postInfo-container" style="margin-top: 15px">
+          <el-row>
+            <el-col :span="9">
+              <el-form-item
+                label-width="130px"
+                label="Số tài khoản:"
+                class="postInfo-container-item"
+              >
+                <el-input placeholder="Nhập số tài khoản" @blur="getInfoAccount" />
+              </el-form-item>
+            </el-col>
 
-      <el-button v-waves :loading="downloadLoading" class="filter-item" style="float:right; background-color:#00AA00" type="primary" icon="el-icon-download" @click="handleDownload">
-        Export
-      </el-button>
+            <el-col :span="9">
+              <el-form-item label-width="180px" label="Tên gợi nhớ: " class="postInfo-container-item">
+                <el-input placeholder="Nhập tên gợi nhớ" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label-width="100px" class="postInfo-container-item">
+                <el-button style="width:100px" type="primary" @click="createNewDebt">Thêm</el-button>
+              </el-form-item>
+            </el-col>
 
+          </el-row>
+        </el-form>
+      </CollapseWrapper>
     </div>
-
+    <h2 style="color:#666; margin-top: 30px;">Danh sách người nhận</h2>
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -24,22 +46,19 @@
       @sort-change="sortChange"
     >
       <el-table-column label="Số tài khoản" min-width="150px" align="center" prop="customerId" />
-      <el-table-column label="Tên người nhận" min-width="150px" align="center" prop="name" />
+      <el-table-column label="Tên gợi nhớ" min-width="150px" align="center" prop="name" />
     </el-table>
-
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
-
   </div>
 </template>
 
 <script>
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import CollapseWrapper from '../../components/Collapse/CollapseWrapper'
+import CollapseButton from '../../components/Collapse/CollapseButton'
 
 export default {
-  name: 'ReceiverTable',
-  components: { Pagination },
+  components: { CollapseButton, CollapseWrapper },
   directives: { waves },
   data() {
     return {
@@ -93,3 +112,60 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+.arrow-down {
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid #666;
+  transition: all 0.4s ease-in-out;
+}
+.arrow-up {
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 7px solid #666;
+  transition: all 0.4s ease-in-out;
+}
+.collapse-btn {
+  border: 1px;
+  width: 100%;
+  padding: 1px 20px;
+  position: relative;
+  .arrow {
+    position: absolute;
+    right: 15px;
+    top: 30px;
+  }
+}
+.collapse-wrapper {
+  padding: 0 20px;
+}
+.pos-abs {
+  position: absolute;
+}
+.el-input--medium .el-input__inner {
+  padding: 20px 0 0px 26px;
+}
+#edit,#delete{
+  border: none;
+  background-color: transparent;
+  outline: none;
+  padding: 5px;
+  font-size: 18px;
+}
+/deep/ .el-table thead {
+  color: #666666;
+  font-size: 16px;
+  line-height: 40px;
+}
+/deep/ .el-input--medium.el-input--suffix #select {
+  font-size: 18px;
+  height: 50px;
+}
+</style>
