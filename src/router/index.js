@@ -156,19 +156,19 @@ export const asyncRoutes = [
     children: [
       {
         path: 'transfer',
-        component: () => import('@/views/customer/transaction/index'),
+        component: () => import('@/views/customer/transaction/index.vue'),
         name: 'Transfer',
         meta: { title: 'Chuyển tiền nội bộ' }
       },
       {
         path: 'link-baking-transfer',
-        component: () => import('@/views/customer/transaction/index'),
+        component: () => import('@/views/customer/transaction/index.vue'),
         name: 'Link Banking Transfer',
         meta: { title: 'Chuyển tiền liên ngân hàng' }
       },
       {
-        path: 'reciever',
-        component: () => import('@/views/transaction/reciever'),
+        path: 'receiver',
+        component: () => import('@/views/customer/transaction/receiver.vue'),
         name: 'ListReciever',
         meta: { title: 'Danh sách người nhận' }
       }
@@ -182,7 +182,7 @@ export const asyncRoutes = [
     name: 'debt',
     meta: {
       title: 'Quản lý nhắc nợ',
-      icon: 'guide',
+      icon: 'list',
       roles: ['customer']
     },
     children: [

@@ -5,9 +5,9 @@
         <el-card style="max-width: 730px; width: 100%">
           <div class="title">CHUYỂN KHOẢN NỘI BỘ</div>
           <div class="sub-title">Thông tin người chuyển </div>
-          <el-form :model="info_transaction" label-position="left" label-width="200px" style="margin:0 50px;" :disabled="!isCreatingNewRequest">
+          <el-form label-position="left" label-width="200px" style="margin:0 50px;" :disabled="!isCreatingNewRequest">
             <el-form-item label="Tài khoản nguồn: ">
-              <el-select :value="paymentAccount.account_number" placeholder="Số tài khoản" readonly>
+              <el-select :value="paymentAccount.account_number" placeholder="Số tài khoản" name="account_number" readonly>
                 <el-option v-for="item in accounts" :key="item.account_number" :label="item.account_number" :value="item.account_number" />
               </el-select>
             </el-form-item>
@@ -18,35 +18,43 @@
             </el-form-item>
           </el-form>
           <div class="sub-title">Thông tin người hưởng: </div>
-          <el-form label-position="left" label-width="200px" style="margin:0 50px;" :disabled="!isCreatingNewRequest">
+          <el-form ref="receiverForm" :rules="receiverRules" :model="info_transaction" label-position="left" label-width="200px" style="margin:0 50px;" :disabled="!isCreatingNewRequest">
             <el-form-item label="Tìm kiếm: ">
-              <el-select v-model="name_saved" placeholder="Nhập tên, tên gợi nhớ đã lưu" clearable class="filter-item">
-                <el-option value="" />
+              <el-select v-model="saved_receiver_account_number" placeholder="Chọn người nhận đã lưu" clearable class="filter-item">
+                <el-option
+                  v-for="item in listReceiver"
+                  :key="item.account_number"
+                  :label="item.nickname"
+                  :value="item.account_number"
+                />
               </el-select>
             </el-form-item>
-            <el-form-item label="Số tài khoản: ">
-              <el-input v-model="info_transaction.receiver_account_number" placeholder="Nhập số tài khoản" type="text" @blur="fetchReceiverInfo" />
+            <el-form-item label="Số tài khoản: " prop="receiver_account_number">
+              <el-input v-model="info_transaction.receiver_account_number" name="receiver_account_number" placeholder="Nhập số tài khoản" type="text" @blur="fetchReceiverInfo" />
             </el-form-item>
             <el-form-item label="Tên người hưởng: ">
               <el-input v-model="info_transaction.receiver_name" placeholder="Tên người hưởng" type="text" disabled />
             </el-form-item>
-            <el-form-item label="Lưu thông tin người hưởng ">
+            <el-form-item label="Lưu người hưởng: ">
               <el-checkbox v-model="saveInfoReceiver" />
+            </el-form-item>
+            <el-form-item v-if="saveInfoReceiver" label="Tên gợi nhớ: ">
+              <el-input v-model="receiver_nickname" placeholder="Nhập tên gợi nhớ" type="text" />
             </el-form-item>
           </el-form>
           <div class="sub-title">Thông tin giao dịch: </div>
-          <el-form label-position="left" label-width="200px" style="margin:0 50px;" :disabled="!isCreatingNewRequest">
-            <el-form-item label="Số tiền chuyển (VND): ">
-              <el-input v-model="info_transaction.deposit_money" placeholder="Nhập số tiền chuyển" type="text" />
+          <el-form ref="transactionForm" :rules="transactionRules" :model="info_transaction" label-position="left" label-width="200px" style="margin:0 50px;" :disabled="!isCreatingNewRequest">
+            <el-form-item label="Số tiền chuyển (VND): " prop="deposit_money">
+              <el-input v-model="info_transaction.deposit_money" name="deposit_money" placeholder="Nhập số tiền chuyển" type="number" />
             </el-form-item>
-            <el-form-item label="Nội dung chuyển tiền: ">
-              <el-input v-model="info_transaction.description" placeholder="Nhập nội dung chuyển tiền" type="textarea" :autosize="{ minRows: 3 }" />
+            <el-form-item label="Nội dung chuyển tiền: " prop="description">
+              <el-input v-model="info_transaction.description" name="description" placeholder="Nhập nội dung chuyển tiền" type="textarea" :autosize="{ minRows: 3 }" />
             </el-form-item>
             <el-form-item label="Phí chuyển tiền: ">
               <el-input :value="info_transaction.billing_cost | toThousandFilter" placeholder="Nhập nội dung chuyển tiền" disabled type="text" />
             </el-form-item>
             <el-form-item label="Người chịu phí: ">
-              <el-select v-model="info_transaction.type_settle" placeholder="Người chuyển trả" clearable class="filter-item">
+              <el-select v-model="info_transaction.type_settle" placeholder="Người chuyển trả" class="filter-item">
                 <el-option
                   v-for="([key, text]) in Object.entries(fee_payer)"
                   :key="key"
@@ -84,11 +92,21 @@
 
 <script>
 import { mapState } from 'vuex'
+
 export default {
   name: 'Profile',
   data() {
+    const validateMinDepositMoney = (rule, value, callback) => {
+      if (value < 10000) {
+        callback(new Error('Số tiền chuyển tối thiểu là 10000'))
+        return
+      }
+
+      callback()
+    }
+
     return {
-      name_saved: '',
+      saved_receiver_account_number: '',
       saveInfoReceiver: false,
       receiver_nickname: '',
       fee_payer: {
@@ -111,13 +129,24 @@ export default {
       isCreatingNewRequest: true,
       isWaitingForConfirmOTP: false,
       isSuccess: false,
-      isFailure: false
+      isFailure: false,
+      receiverRules: {
+        receiver_account_number: [{ required: true, message: 'Vui lòng nhập số tài khoản người nhận', trigger: 'blur' }]
+      },
+      transactionRules: {
+        deposit_money: [
+          { required: true, message: 'Vui lòng nhập số tiền', trigger: 'blur' },
+          { validator: validateMinDepositMoney, trigger: 'blur' }
+        ],
+        description: [{ required: true, message: 'Vui lòng nhập nội dung chuyển tiền', trigger: 'blur' }]
+      }
     }
   },
   computed: {
     ...mapState({
       accounts: state => state.bankAccount.list,
       targetAccount: state => state.bankAccount.targetAccount,
+      listReceiver: state => state.bankAccount.listReceiver,
       curTransaction: state => state.transfer.curTransaction
     }),
     paymentAccount() {
@@ -134,19 +163,61 @@ export default {
         this.info_transaction.receiver_account_number = this.targetAccount.account_number
         this.info_transaction.receiver_name = this.targetAccount.customer_name
         this.info_transaction.bank_receiver = this.targetAccount.account_bank
+
+        this.$refs.receiverForm.clearValidate('receiver_account_number')
+        return
       }
+
+      this.clearReceiverForm()
+    },
+    saved_receiver_account_number() {
+      const receiver = this.listReceiver.find(cur => cur.account_number === this.saved_receiver_account_number)
+
+      if (receiver) {
+        this.info_transaction.receiver_account_number = receiver.account_number
+        this.info_transaction.receiver_name = receiver.name
+        this.info_transaction.bank_receiver = receiver.bank
+        this.receiver_nickname = receiver.nickname
+
+        this.$refs.receiverForm.clearValidate('receiver_account_number')
+        return
+      }
+
+      this.clearReceiverForm()
     }
   },
   mounted() {
     this.$store.dispatch('bankAccount/getList', { type: 1 }) // only get payment account
+    this.$store.dispatch('bankAccount/getListReceiver')
   },
   methods: {
+    clearReceiverForm() {
+      this.info_transaction.receiver_account_number = ''
+      this.info_transaction.receiver_name = ''
+      this.info_transaction.bank_receiver = ''
+      this.receiver_nickname = ''
+
+      this.$refs.receiverForm.clearValidate('receiver_account_number')
+    },
     async fetchReceiverInfo() {
-      this.$store.dispatch('bankAccount/getTargetPaymentAccount', {
-        account_number: this.info_transaction.receiver_account_number
-      })
+      if (this.info_transaction.receiver_account_number) {
+        this.$store.dispatch('bankAccount/getTargetPaymentAccount', {
+          account_number: this.info_transaction.receiver_account_number
+        })
+      }
     },
     async confirm() {
+      this.$refs.receiverForm.validate(valid => {
+        if (!valid) return
+
+        this.$refs.transactionForm.validate(valid2 => {
+          if (!valid2) return
+
+          this.sendNewTransferRequest()
+        })
+      })
+    },
+    async sendNewTransferRequest() {
       this.submitNewRequestLoading = true
       await this.$store.dispatch('transfer/newTransferRequest', this.info_transaction)
 
@@ -186,6 +257,15 @@ export default {
         })
 
         this.isSuccess = true
+
+        // Save new receiver
+        if (this.receiver_nickname && !this.saved_receiver_account_number) {
+          this.$store.dispatch('bankAccount/saveNewReceiver', {
+            account_number: this.info_transaction.receiver_account_number,
+            bank: 'HPK',
+            nickname: this.receiver_nickname
+          })
+        }
       } catch (e) {
         this.isFailure = true
       } finally {

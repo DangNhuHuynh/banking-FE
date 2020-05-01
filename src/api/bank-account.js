@@ -16,3 +16,18 @@ export function getTargetPaymentAccount(input) {
     method: 'get'
   })
 }
+
+export function getListReceiver() {
+  return request({
+    url: apiUrl + '/list_receiver/me',
+    method: 'get'
+  })
+}
+
+export function saveNewReceiver(input) {
+  return request({
+    url: apiUrl + '/list_receiver',
+    method: 'post',
+    data: input
+  })
+}

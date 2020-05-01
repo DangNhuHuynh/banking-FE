@@ -1,7 +1,8 @@
-import { getList, getTargetPaymentAccount } from '@/api/bank-account'
+import { getList, getTargetPaymentAccount, getListReceiver, saveNewReceiver } from '@/api/bank-account'
 
 const state = {
   list: [],
+  listReceiver: [],
   targetAccount: null
 }
 
@@ -11,6 +12,12 @@ const mutations = {
   },
   SET_TARGET_ACCOUNT(state, account) {
     state.targetAccount = account
+  },
+  SET_LIST_RECEIVER(state, listReceiver) {
+    state.listReceiver = listReceiver
+  },
+  PUSH_NEW_RECEIVER(state, receiver) {
+    state.listReceiver.push(receiver)
   }
 }
 
@@ -36,6 +43,33 @@ const actions = {
         commit('SET_TARGET_ACCOUNT', data.data)
         resolve()
       }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  getListReceiver({ commit }) {
+    return new Promise((resolve, reject) => {
+      getListReceiver().then(response => {
+        const { data } = response
+
+        commit('SET_LIST_RECEIVER', data.data)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  saveNewReceiver({ commit }, input) {
+    return new Promise((resolve, reject) => {
+      saveNewReceiver(input).then(response => {
+        const { data } = response
+
+        commit('PUSH_NEW_RECEIVER', data.data)
+        resolve()
+      }).catch(error => {
+        error.message = error.response.data
+          ? error.response.data.message || error.message
+          : error.message
         reject(error)
       })
     })
