@@ -6,7 +6,7 @@ export function newTransferRequest(input) {
   return request({
     url: apiUrl + '/transfer_money/transfer',
     method: 'post',
-    body: input
+    data: input
   })
 }
 
@@ -14,6 +14,6 @@ export function verificationTransferRequest(input) {
   return request({
     url: apiUrl + '/transfer_money/transfer/verification',
     method: 'post',
-    body: input
+    data: input
   })
 }

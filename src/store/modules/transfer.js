@@ -1,8 +1,14 @@
 import { newTransferRequest, verificationTransferRequest } from '@/api/transfer'
 
-const state = {}
+const state = {
+  curTransaction: null
+}
 
-const mutations = {}
+const mutations = {
+  SET_CURRENT_TRANSACTION(state, transaction) {
+    state.curTransaction = transaction
+  }
+}
 
 const actions = {
   // user login
@@ -10,7 +16,9 @@ const actions = {
     return new Promise((resolve, reject) => {
       newTransferRequest(input).then(response => {
         if (response && response.status === 200) {
-          return resolve(response.data.data)
+          commit('SET_CURRENT_TRANSACTION', response.data.data)
+
+          return resolve()
         }
         reject()
       }).catch(error => {

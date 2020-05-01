@@ -9,3 +9,10 @@ export function getList(input) {
     params: input
   })
 }
+
+export function getTargetPaymentAccount(input) {
+  return request({
+    url: apiUrl + '/account/' + input.account_number,
+    method: 'get'
+  })
+}
