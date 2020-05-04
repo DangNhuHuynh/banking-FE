@@ -266,6 +266,8 @@ export default {
             nickname: this.receiver_nickname
           })
         }
+        // Update new balance
+        await this.$store.dispatch('bankAccount/getList', { type: 1 }) // only get payment account
       } catch (e) {
         this.isFailure = true
       } finally {
