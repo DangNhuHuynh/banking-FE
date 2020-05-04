@@ -47,10 +47,10 @@ const actions = {
   },
   updateDebtInfo({ commit }, input) {
     return new Promise((resolve, reject) => {
-      updateInfoDebt(input.id, input).then(response => {
+      updateInfoDebt(input._id, input).then(response => {
         const { data } = response
         // console.log(data)
-        if (data && data.code == 20000) {
+        if (data && data.code === 20000) {
           commit('SET_DEBT', input)
           resolve()
           return

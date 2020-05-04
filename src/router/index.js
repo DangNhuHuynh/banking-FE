@@ -156,13 +156,13 @@ export const asyncRoutes = [
     children: [
       {
         path: 'transfer',
-        component: () => import('@/views/customer/transaction/index.vue'),
+        component: () => import('@/views/customer/transaction/internal.vue'),
         name: 'Transfer',
         meta: { title: 'Chuyển tiền nội bộ' }
       },
       {
         path: 'link-baking-transfer',
-        component: () => import('@/views/customer/transaction/index.vue'),
+        component: () => import('@/views/customer/transaction/link-banking.vue'),
         name: 'Link Banking Transfer',
         meta: { title: 'Chuyển tiền liên ngân hàng' }
       },

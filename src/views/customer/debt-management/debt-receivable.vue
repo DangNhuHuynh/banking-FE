@@ -142,23 +142,13 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="scope">
-            <el-button id="edit" @click="handleEdit(scope)"><i class="el-icon-edit" /></el-button>
             <el-button id="delete" @click="handleDelete(scope)"><i class="el-icon-delete" /></el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <el-dialog :visible.sync="dialogVisibleEdit">
+      <el-dialog :visible.sync="dialogVisibleDelete">
         <el-form :model="editingDebtInfo" label-width="120px" label-position="left">
-          <el-form-item label="Số tài khoản">
-            <el-input v-model="editingDebtInfo.debit_account_number" placeholder="Số tài khoản" disabled />
-          </el-form-item>
-          <el-form-item label="Họ tên">
-            <el-input v-model="editingDebtInfo.name" placeholder="Họ tên" />
-          </el-form-item>
-          <el-form-item label="Số tiền (VND)">
-            <el-input v-model="editingDebtInfo.amount_owned" placeholder="VND" />
-          </el-form-item>
           <el-form-item label="Nội dung">
             <el-input
               v-model="editingDebtInfo.description"
@@ -167,42 +157,10 @@
               placeholder="Nội dung"
             />
           </el-form-item>
-          <el-form-item label="Tình trạng">
-            <el-select
-              v-model="editingDebtInfo.status"
-              placeholder="Tình trạng"
-              clearable
-              style="width:100%"
-            >
-              <el-option
-                v-for="(text, key) in debt_status"
-                :key="'editing-'+key"
-                :label="text"
-                :value="parseInt(key)"
-                style="font-size: 17px"
-              />
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <div style="text-align:right;">
-          <el-button type="danger" @click="dialogVisibleEdit=false">Hủy</el-button>
-          <el-button type="primary" @click="confirmEdit">OK</el-button>
-        </div>
-      </el-dialog>
-
-      <el-dialog :visible.sync="dialogVisibleDelete">
-        <el-form label-width="120px" label-position="left">
-          <el-form-item label="Nội dung">
-            <el-input
-              :autosize="{ minRows: 2, maxRows: 4}"
-              type="textarea"
-              placeholder="Nội dung"
-            />
-          </el-form-item>
         </el-form>
         <div style="text-align:right;">
           <el-button type="danger" @click="dialogVisibleDelete=false">Hủy</el-button>
-          <el-button type="primary">Xác nhận xóa</el-button>
+          <el-button type="primary" @click="confirmDelete">Xác nhận xóa</el-button>
         </div>
       </el-dialog>
     </div>
@@ -233,7 +191,7 @@ export default {
       editingDebtInfo: {},
       debt_status: {
         '0': 'Chưa thanh toán',
-        '1': 'Đã thanh toán'
+        '2': 'Đã hủy'
       },
       tag_types: {
         '0': 'danger',
@@ -286,21 +244,22 @@ export default {
     createNewDebt() {
       console.log(123)
     },
-    handleEdit(scope) {
-      this.dialogVisibleEdit = true
-      this.checkStrictly = true
-      this.editingDebtInfo = deepClone(scope.row)
-    },
-    async confirmEdit() {
-      this.$store.dispatch('debt/updateDebtInfo', this.editingDebtInfo)
-      this.dialogVisibleEdit = false
+    async confirmDelete() {
+      this.editingDebtInfo.status = '2'
+      this.$store.dispatch('debt_reminder/updateDebt', this.editingDebtInfo)
+      console.log(this.editingDebtInfo.description)
+      console.log(this.editingDebtInfo._id)
+      console.log(this.editingDebtInfo.status)
+      this.dialogVisibleDelete = false
       this.$notify({
-        title: 'Cập nhật thành công!',
+        title: 'Hủy nhắc nợ thành công!',
         type: 'success'
       })
     },
     handleDelete(scope) {
       this.dialogVisibleDelete = true
+      this.editingDebtInfo = deepClone(scope.row)
+      this.editingDebtInfo.description = ''
     }
   }
 }

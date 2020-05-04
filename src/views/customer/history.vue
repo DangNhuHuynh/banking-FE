@@ -11,7 +11,7 @@
       <el-tabs v-model="activeTab" style="margin-top:15px;" type="border-card">
         <el-tab-pane v-for="item in tabMapOptions" :key="item.key" :label="item.label" :name="item.key">
           <keep-alive>
-            <tab-pane :data="filtered" />
+            <tab-pane :data="historyList" />
           </keep-alive>
         </el-tab-pane>
       </el-tabs>
@@ -29,7 +29,7 @@ export default {
   data() {
     return {
       account: {
-        accountNumber: {}
+        accountNumber: ''
       },
       activeTab: 'receive',
       tabMapOptions: [
@@ -43,18 +43,12 @@ export default {
     ...mapState({
       accounts: state => state.bankAccount.list,
       historyList: state => state.customer.historyList
-    }),
-    filtered() {
-      return this.historyList.filter(trans => trans.account_number === this.account.account_number)
-    }
+    })
   },
   watch: {
     accounts: {
       immediate: true,
       handler() {
-        console.log(this.account.accountNumber)
-        console.log(this.activeTab)
-
         if (this.accounts[0]) {
           this.account.accountNumber = this.accounts[0].account_number
         }
@@ -78,6 +72,9 @@ export default {
   },
   methods: {
     fetchHistory() {
+      console.log(this.account.accountNumber)
+      console.log(this.activeTab)
+
       if (this.activeTab === 'receive') {
         this.$store.dispatch('customer/getReceiveTransaction', { account_number: this.account.accountNumber })
       } else if (this.activeTab === 'remit') {
