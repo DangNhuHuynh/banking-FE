@@ -178,7 +178,6 @@ export const asyncRoutes = [
     path: '/debt',
     component: Layout,
     alwaysShow: true,
-    redirect: 'index',
     name: 'debt',
     meta: {
       title: 'Quản lý nhắc nợ',

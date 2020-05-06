@@ -55,7 +55,7 @@
           </el-row>
         </el-form>
         <div class="text-center">
-          <el-button style="width:100px" type="primary" @click="createNewDebt">Gửi</el-button>
+          <el-button style="width:100px" type="primary" :loading="createDebtLoading" @click="createNewDebt">Gửi</el-button>
         </div>
       </CollapseWrapper>
     </div>
@@ -187,7 +187,8 @@ export default {
         '0': 'danger',
         '1': 'success',
         '2': 'info'
-      }
+      },
+      createDebtLoading: false
     }
   },
   computed: {
@@ -202,7 +203,7 @@ export default {
       if (status === null) {
         return this.listDebt
       }
-      return this.listDebt.filter(debt => debt.status === status)
+      return this.listDebt.filter(debt => parseInt(debt.status) === status)
     }
   },
   watch: {
@@ -252,7 +253,9 @@ export default {
       }
     },
     async createNewDebt() {
-      this.$store.dispatch('debt_reminder/createDebt', this.debtInfo)
+      this.createDebtLoading = true
+      await this.$store.dispatch('debt_reminder/createDebt', this.debtInfo)
+      this.createDebtLoading = false
       this.$notify({
         title: 'Tạo nhắc nợ thành công!',
         type: 'success'
@@ -260,7 +263,7 @@ export default {
     },
     async confirmDelete() {
       this.editingDebtInfo.status = '2'
-      this.$store.dispatch('debt_reminder/updateDebt', this.editingDebtInfo)
+      await this.$store.dispatch('debt_reminder/updateDebt', this.editingDebtInfo)
       this.dialogVisibleDelete = false
       this.$notify({
         title: 'Hủy nhắc nợ thành công!',
