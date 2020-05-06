@@ -14,26 +14,15 @@
                 label-width="100px"
                 label="Số tài khoản"
                 class="postInfo-container-item"
+                prop="debt_account_number"
               >
-                <el-select
-                  v-model="debtInfo.debit_account_number"
-                  placeholder="Nhập số tài khoản nợ"
-                  allow-create
-                  filterable
-                >
-                  <el-option
-                    v-for="item in distintListDebt"
-                    :key="item"
-                    :label="item"
-                    :value="item"
-                  />
-                </el-select>
+                <el-input v-model="debtInfo.debt_account_number" placeholder="Nhập số tài khoản nợ" type="text" name="debt_account_number" auto-complete="listReceiver" @blur="fetchDebtInfo" />
               </el-form-item>
             </el-col>
 
             <el-col :span="6">
               <el-form-item label-width="70px" label="Họ tên" class="postInfo-container-item">
-                <el-input v-model="debtInfo.name" placeholder="Họ tên người nợ" />
+                <el-input v-model="debtInfo.debt_customer_name" placeholder="Họ tên người nợ" />
               </el-form-item>
             </el-col>
 
@@ -49,7 +38,7 @@
                 label="Số tiền (VNĐ)"
                 class="postInfo-container-item"
               >
-                <el-input v-model="debtInfo.amount_owned" type="number" placeholder="Nhập số tiền nợ" />
+                <el-input v-model="debtInfo.money" type="number" placeholder="Nhập số tiền nợ" />
               </el-form-item>
             </el-col>
 
@@ -116,7 +105,7 @@
         </el-table-column>
         <el-table-column label="Tên người nợ" min-width="115px" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.debt_reminder_name }}</span>
+            <span>{{ row.debt_customer_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Số tiền chuyển" min-width="140px" align="center">
@@ -178,11 +167,12 @@ export default {
   data() {
     return {
       debtInfo: {
-        debit_account_number: '',
-        name: '',
+        debt_account_number: '',
+        debt_customer_name: '',
         bank_name: '',
-        amount_owned: '',
-        description: ''
+        money: '',
+        description: '',
+        status: '0'
       },
       status: '0',
       dialogVisibleEdit: false,
@@ -203,7 +193,9 @@ export default {
   computed: {
     ...mapState({
       listDebt: state => state.debt_reminder.debtList,
-      account: state => state.debt.infoAccount
+      accounts: state => state.bankAccount.list,
+      targetAccount: state => state.bankAccount.targetAccount,
+      listReceiver: state => state.bankAccount.listReceiver
     }),
     filteredDebtList() {
       const status = parseInt(this.status)
@@ -211,13 +203,26 @@ export default {
         return this.listDebt
       }
       return this.listDebt.filter(debt => debt.status === status)
-    },
-    distintListDebt() {
-      return [...new Set(this.listDebt.map(item => item.account_number))]
+    }
+  },
+  watch: {
+    targetAccount() {
+      if (this.targetAccount) {
+        this.debtInfo.debt_account_number = this.targetAccount.account_number
+        this.debtInfo.debt_customer_name = this.targetAccount.customer_name
+        this.debtInfo.bank_name = this.targetAccount.account_bank
+
+        // this.$refs.receiverForm.clearValidate('debt_account_number')
+        return
+      }
+
+      this.clearDebtForm()
     }
   },
   mounted() {
     this.$store.dispatch('debt_reminder/getList', { type: '0' })
+    this.$store.dispatch('bankAccount/getList', { type: 1 })
+    this.$store.dispatch('bankAccount/getListReceiver')
   },
   methods: {
     numberWithDots(number) {
@@ -230,26 +235,32 @@ export default {
       }
       return arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     },
-    getInfoAccount(acc_num) {
-      this.$nextTick(async() => {
-        await this.$store.dispatch('debt/getInfoAccount', this.acc_num)
+    clearDebtForm() {
+      this.debtInfo.debt_account_number = ''
+      this.debtInfo.debt_customer_name = ''
+      this.debtInfo.bank_name = ''
+      this.debtInfo.money = ''
+      this.debtInfo.description = ''
 
-        if (!Object.keys(this.account).length) {
-          return
-        }
-        this.user_name = this.account.user_name
-        this.bank_name = this.account.bank_name
-      })
+      // this.$refs.receiverForm.clearValidate('receiver_account_number')
     },
-    createNewDebt() {
-      console.log(123)
+    async fetchDebtInfo() {
+      if (this.debtInfo.debt_account_number) {
+        this.$store.dispatch('bankAccount/getTargetPaymentAccount', {
+          account_number: this.debtInfo.debt_account_number
+        })
+      }
+    },
+    async createNewDebt() {
+      this.$store.dispatch('debt_reminder/createDebt', this.debtInfo)
+      this.$notify({
+        title: 'Tạo nhắc nợ thành công!',
+        type: 'success'
+      })
     },
     async confirmDelete() {
       this.editingDebtInfo.status = '2'
       this.$store.dispatch('debt_reminder/updateDebt', this.editingDebtInfo)
-      console.log(this.editingDebtInfo.description)
-      console.log(this.editingDebtInfo._id)
-      console.log(this.editingDebtInfo.status)
       this.dialogVisibleDelete = false
       this.$notify({
         title: 'Hủy nhắc nợ thành công!',

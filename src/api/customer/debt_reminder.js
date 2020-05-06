@@ -10,6 +10,14 @@ export function getAll(input) {
   })
 }
 
+export function createDebt(data) {
+  return request({
+    url: apiUrl + `/debt_reminder`,
+    method: 'post',
+    data
+  })
+}
+
 export function updateDebt(id, data) {
   return request({
     url: apiUrl + `/debt_reminder/${id}`,
@@ -17,11 +25,3 @@ export function updateDebt(id, data) {
     data
   })
 }
-
-export function deleteDebt(id) {
-  return request({
-    url: apiUrl + `/debt_reminder/${id}`,
-    method: 'delete'
-  })
-}
-
