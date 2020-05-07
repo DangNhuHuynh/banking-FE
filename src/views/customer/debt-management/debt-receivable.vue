@@ -126,6 +126,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="status == 0"
           align="center"
           width="110"
           class-name="small-padding fixed-width"
@@ -262,6 +263,11 @@ export default {
         type: 'success'
       })
     },
+    handleDelete(scope) {
+      this.dialogVisibleDelete = true
+      this.editingDebtInfo = deepClone(scope.row)
+      this.editingDebtInfo.description = ''
+    },
     async confirmDelete() {
       this.removeDebtLoading = true
       this.editingDebtInfo.status = '2'
@@ -272,11 +278,6 @@ export default {
         title: 'Hủy nhắc nợ thành công!',
         type: 'success'
       })
-    },
-    handleDelete(scope) {
-      this.dialogVisibleDelete = true
-      this.editingDebtInfo = deepClone(scope.row)
-      this.editingDebtInfo.description = ''
     }
   }
 }

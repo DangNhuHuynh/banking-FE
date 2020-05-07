@@ -72,7 +72,7 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="scope">
-            <el-button type="success" @click="handlePayment(scope)">Thanh toán</el-button>
+            <el-button type="success" @click="handlePayment(scope.row._id)">Thanh toán</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -89,12 +89,12 @@
       <el-dialog :visible.sync="dialogVisiblePayment">
         <el-form label-width="120px" label-position="left">
           <el-form-item label="OTP: ">
-            <el-input placeholder="Nhập mã OTP" />
+            <el-input v-model="otp" placeholder="Nhập mã OTP" />
           </el-form-item>
         </el-form>
         <div style="text-align:right;">
           <el-button type="danger" @click="dialogVisiblePayment=false">Hủy</el-button>
-          <el-button type="primary" @click="confirmPayment">Xác nhận</el-button>
+          <el-button type="primary" @click="confirmOTP">Xác nhận</el-button>
         </div>
       </el-dialog>
 
@@ -131,10 +131,21 @@ export default {
         amount_owned: '',
         description: ''
       },
+      info_debt: {
+        status: '1'
+      },
+      otp: '',
+      updatingReminderId: '',
+      submitOTPLoading: false,
+      // Below is 4 states of transfer request
+      isWaitingForConfirmOTP: false,
+      isSuccess: false,
+      isFailure: false,
       status: '0',
       dialogVisibleDelete: false,
       dialogVisiblePayment: false,
       checkStrictly: false,
+      target: {},
       editingDebtInfo: {},
       debt_status: {
         '0': 'Chưa thanh toán',
@@ -150,7 +161,8 @@ export default {
   computed: {
     ...mapState({
       listDebt: state => state.debt_reminder.debtList,
-      account: state => state.debt.infoAccount
+      // account: state => state.debt.infoAccount,
+      curTransaction: state => state.debt_reminder.curTransaction
     }),
     filteredDebtList() {
       const status = parseInt(this.status)
@@ -165,6 +177,7 @@ export default {
   },
   mounted() {
     this.$store.dispatch('debt_reminder/getList', { type: '1' })
+    this.$store.dispatch('bankAccount/getListReceiver')
   },
   methods: {
     numberWithDots(number) {
@@ -177,26 +190,60 @@ export default {
       }
       return arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     },
-    getInfoAccount(acc_num) {
-      this.$nextTick(async() => {
-        await this.$store.dispatch('debt/getInfoAccount', this.acc_num)
-
-        if (!Object.keys(this.account).length) {
-          return
-        }
-        this.user_name = this.account.user_name
-        this.bank_name = this.account.bank_name
-      })
-    },
-    handlePayment(scope) {
+    async handlePayment(id) {
       this.dialogVisiblePayment = true
-    },
-    async confirmPayment() {
-      this.dialogVisiblePayment = false
+      this.updatingReminderId = id
+
+      await this.$store.dispatch('debt_reminder/requestPaymentDebt', { _id: id })
+
       this.$notify({
-        title: 'Thanh toán thành công!',
-        type: 'success'
+        title: 'Success',
+        message: 'Vui lòng kiểm tra mã xác thực OTP đã được gửi vào email của bạn.',
+        type: 'success',
+        duration: 4000
       })
+
+      this.isWaitingForConfirmOTP = true
+    },
+    async confirmOTP() {
+      this.submitOTPLoading = true
+      if (!this.curTransaction) {
+        this.$notify({
+          title: 'Fail',
+          message: 'Có lỗi xảy ra, vui lòng thử lại sau.',
+          type: 'error',
+          duration: 4000
+        })
+        return
+      }
+
+      try {
+        console.log(this.curTransaction._id)
+        await this.$store.dispatch('debt_reminder/verificationPayment', {
+          transaction_id: this.curTransaction._id,
+          otp: this.otp,
+          _id: this.updatingReminderId
+        })
+
+        this.$notify({
+          title: 'Success',
+          message: 'Thanh toán thành công.',
+          type: 'success',
+          duration: 4000
+        })
+
+        this.isSuccess = true
+
+        // Update status nợ
+        await this.$store.dispatch('debt_reminder/getList', { type: 1 })
+
+        // Update new balance
+        await this.$store.dispatch('bankAccount/getList', { type: 1 }) // only get payment account
+      } catch (e) {
+        this.isFailure = true
+      } finally {
+        this.isWaitingForConfirmOTP = false
+      }
     },
     handleDelete(scope) {
       this.dialogVisibleDelete = true

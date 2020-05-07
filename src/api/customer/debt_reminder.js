@@ -25,3 +25,19 @@ export function updateDebt(id, data) {
     data
   })
 }
+
+export function requestPaymentDebt(id, input) {
+  return request({
+    url: apiUrl + `/debt_reminder/${id}/pay`,
+    method: 'post',
+    data: input
+  })
+}
+
+export function verificationPaymentDebt(id, input) {
+  return request({
+    url: apiUrl + `/debt_reminder/${id}/pay/verification`,
+    method: 'post',
+    data: input
+  })
+}

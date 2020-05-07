@@ -1,7 +1,8 @@
-import { getAll, createDebt, updateDebt } from '@/api/customer/debt_reminder'
+import { getAll, createDebt, updateDebt, requestPaymentDebt, verificationPaymentDebt } from '@/api/customer/debt_reminder'
 
 const state = {
-  debtList: []
+  debtList: [],
+  curTransaction: null
 }
 
 const mutations = {
@@ -22,6 +23,9 @@ const mutations = {
     if (index >= 0) {
       state.debtList.splice(index, 1)
     }
+  },
+  SET_CURRENT_TRANSACTION(state, transaction) {
+    state.curTransaction = transaction
   }
 }
 
@@ -61,6 +65,32 @@ const actions = {
           commit('SET_DEBT', data.data)
           resolve()
           return
+        }
+        reject()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  requestPaymentDebt({ commit }, input) {
+    return new Promise((resolve, reject) => {
+      requestPaymentDebt(input._id).then(response => {
+        if (response && response.status === 200) {
+          commit('SET_CURRENT_TRANSACTION', response.data.data)
+
+          return resolve()
+        }
+        reject()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  verificationPayment({ commit }, input) {
+    return new Promise((resolve, reject) => {
+      verificationPaymentDebt(input._id).then(response => {
+        if (response && response.status === 200) {
+          return resolve(response.data.data)
         }
         reject()
       }).catch(error => {
