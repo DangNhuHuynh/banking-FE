@@ -149,7 +149,7 @@
         </el-form>
         <div style="text-align:right;">
           <el-button type="danger" @click="dialogVisibleDelete=false">Hủy</el-button>
-          <el-button type="primary" @click="confirmDelete">Xác nhận xóa</el-button>
+          <el-button type="primary" :loading="removeDebtLoading" @click="confirmDelete">Xác nhận xóa</el-button>
         </div>
       </el-dialog>
     </div>
@@ -188,7 +188,8 @@ export default {
         '1': 'success',
         '2': 'info'
       },
-      createDebtLoading: false
+      createDebtLoading: false,
+      removeDebtLoading: false
     }
   },
   computed: {
@@ -262,8 +263,10 @@ export default {
       })
     },
     async confirmDelete() {
+      this.removeDebtLoading = true
       this.editingDebtInfo.status = '2'
       await this.$store.dispatch('debt_reminder/updateDebt', this.editingDebtInfo)
+      this.removeDebtLoading = false
       this.dialogVisibleDelete = false
       this.$notify({
         title: 'Hủy nhắc nợ thành công!',

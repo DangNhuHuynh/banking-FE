@@ -9,7 +9,7 @@ const mutations = {
     state.debtList = list
   },
   SET_DEBT(state, payload) {
-    const index = state.debtList.findIndex(debt => debt.id === payload.id)
+    const index = state.debtList.findIndex(debt => debt._id === payload._id)
     if (index >= 0) {
       state.debtList.splice(index, 1, payload)
     }
@@ -18,7 +18,7 @@ const mutations = {
     state.debtList.push(payload)
   },
   REMOVE_DEBT(state, payload) {
-    const index = state.debtList.findIndex(debt => debt.id === payload.id)
+    const index = state.debtList.findIndex(debt => debt._id === payload._id)
     if (index >= 0) {
       state.debtList.splice(index, 1)
     }
@@ -57,9 +57,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       updateDebt(input._id, input).then(response => {
         const { data } = response
-        // console.log(data)
-        if (data && data.code === 20000) {
-          commit('SET_DEBT', input)
+        if (response && response.status === 200) {
+          commit('SET_DEBT', data.data)
           resolve()
           return
         }
