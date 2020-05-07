@@ -72,7 +72,7 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="scope">
-            <el-button type="success" @click="handlePayment(scope.row._id)">Thanh toán</el-button>
+            <el-button type="success" :loading="isSendingPaymentRequest && (scope.row._id === updatingReminderId)" @click="handlePayment(scope.row._id)">Thanh toán</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -94,7 +94,7 @@
         </el-form>
         <div style="text-align:right;">
           <el-button type="danger" @click="dialogVisiblePayment=false">Hủy</el-button>
-          <el-button type="primary" @click="confirmOTP">Xác nhận</el-button>
+          <el-button type="primary" :loading="submitOTPLoading" @click="confirmOTP">Xác nhận</el-button>
         </div>
       </el-dialog>
 
@@ -155,7 +155,8 @@ export default {
         '0': 'danger',
         '1': 'success',
         '2': 'info'
-      }
+      },
+      isSendingPaymentRequest: false
     }
   },
   computed: {
@@ -191,7 +192,7 @@ export default {
       return arr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     },
     async handlePayment(id) {
-      this.dialogVisiblePayment = true
+      this.isSendingPaymentRequest = true
       this.updatingReminderId = id
 
       await this.$store.dispatch('debt_reminder/requestPaymentDebt', { _id: id })
@@ -203,6 +204,8 @@ export default {
         duration: 4000
       })
 
+      this.isSendingPaymentRequest = false
+      this.dialogVisiblePayment = true
       this.isWaitingForConfirmOTP = true
     },
     async confirmOTP() {
@@ -218,7 +221,6 @@ export default {
       }
 
       try {
-        console.log(this.curTransaction._id)
         await this.$store.dispatch('debt_reminder/verificationPayment', {
           transaction_id: this.curTransaction._id,
           otp: this.otp,
@@ -236,13 +238,12 @@ export default {
 
         // Update status nợ
         await this.$store.dispatch('debt_reminder/getList', { type: 1 })
-
-        // Update new balance
-        await this.$store.dispatch('bankAccount/getList', { type: 1 }) // only get payment account
       } catch (e) {
         this.isFailure = true
       } finally {
+        this.submitOTPLoading = false
         this.isWaitingForConfirmOTP = false
+        this.dialogVisiblePayment = false
       }
     },
     handleDelete(scope) {

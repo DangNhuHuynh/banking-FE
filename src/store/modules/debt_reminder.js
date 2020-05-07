@@ -88,7 +88,7 @@ const actions = {
   },
   verificationPayment({ commit }, input) {
     return new Promise((resolve, reject) => {
-      verificationPaymentDebt(input._id).then(response => {
+      verificationPaymentDebt(input._id, input).then(response => {
         if (response && response.status === 200) {
           return resolve(response.data.data)
         }
