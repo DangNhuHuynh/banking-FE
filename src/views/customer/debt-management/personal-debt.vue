@@ -76,6 +76,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="status=='0'"
           align="center"
           width="60"
           class-name="small-padding fixed-width"
@@ -99,9 +100,10 @@
       </el-dialog>
 
       <el-dialog :visible.sync="dialogVisibleDelete">
-        <el-form label-width="120px" label-position="left">
+        <el-form :model="editingDebtInfo" label-width="120px" label-position="left">
           <el-form-item label="Nội dung">
             <el-input
+              v-model="editingDebtInfo.description"
               :autosize="{ minRows: 2, maxRows: 4}"
               type="textarea"
               placeholder="Nội dung"
@@ -110,7 +112,7 @@
         </el-form>
         <div style="text-align:right;">
           <el-button type="danger" @click="dialogVisibleDelete=false">Hủy</el-button>
-          <el-button type="primary">Xác nhận xóa</el-button>
+          <el-button type="primary" @click="confirmDelete">Xác nhận xóa</el-button>
         </div>
       </el-dialog>
     </div>
@@ -119,7 +121,7 @@
 
 <script>
 import { mapState } from 'vuex'
-// import { deepClone } from '@/utils'
+import { deepClone } from '@/utils'
 
 export default {
   data() {
@@ -248,6 +250,19 @@ export default {
     },
     handleDelete(scope) {
       this.dialogVisibleDelete = true
+      this.editingDebtInfo = deepClone(scope.row)
+      this.editingDebtInfo.description = ''
+    },
+    async confirmDelete() {
+      this.removeDebtLoading = true
+      this.editingDebtInfo.status = '2'
+      await this.$store.dispatch('debt_reminder/updateDebt', this.editingDebtInfo)
+      this.removeDebtLoading = false
+      this.dialogVisibleDelete = false
+      this.$notify({
+        title: 'Hủy nhắc nợ thành công!',
+        type: 'success'
+      })
     }
   }
 }
