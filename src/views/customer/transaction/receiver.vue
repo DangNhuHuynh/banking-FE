@@ -94,7 +94,7 @@ export default {
         try {
           await this.$store.dispatch('bankAccount/saveNewReceiver', {
             account_number: this.receiver_form.account_number,
-            bank: 'HPK',
+            bank_id: 'HPK',
             nickname: this.receiver_form.nickname
           })
 

@@ -17,6 +17,13 @@ export function getTargetPaymentAccount(input) {
   })
 }
 
+export function getLinkTargetPaymentAccount(input) {
+  return request({
+    url: apiUrl + '/account/' + input.bank_id + '/' + input.account_number,
+    method: 'get'
+  })
+}
+
 export function getListReceiver() {
   return request({
     url: apiUrl + '/list_receiver/me',

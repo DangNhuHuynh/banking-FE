@@ -116,7 +116,7 @@ export default {
       info_transaction: {
         receiver_account_number: '',
         receiver_name: '',
-        bank_receiver: '',
+        bank_receiver: 'HPK',
         deposit_money: '',
         description: '',
         billing_cost: 1100,
@@ -262,7 +262,7 @@ export default {
         if (this.receiver_nickname && !this.saved_receiver_account_number) {
           this.$store.dispatch('bankAccount/saveNewReceiver', {
             account_number: this.info_transaction.receiver_account_number,
-            bank: 'HPK',
+            bank_id: 'HPK',
             nickname: this.receiver_nickname
           })
         }

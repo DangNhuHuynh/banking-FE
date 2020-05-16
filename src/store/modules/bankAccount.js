@@ -1,4 +1,4 @@
-import { getList, getTargetPaymentAccount, getListReceiver, saveNewReceiver } from '@/api/bank-account'
+import { getList, getTargetPaymentAccount, getLinkTargetPaymentAccount, getListReceiver, saveNewReceiver } from '@/api/bank-account'
 
 const state = {
   list: [],
@@ -38,6 +38,18 @@ const actions = {
   getTargetPaymentAccount({ commit }, input) {
     return new Promise((resolve, reject) => {
       getTargetPaymentAccount(input).then(response => {
+        const { data } = response
+
+        commit('SET_TARGET_ACCOUNT', data.data)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  getLinkTargetPaymentAccount({ commit }, input) {
+    return new Promise((resolve, reject) => {
+      getLinkTargetPaymentAccount(input).then(response => {
         const { data } = response
 
         commit('SET_TARGET_ACCOUNT', data.data)

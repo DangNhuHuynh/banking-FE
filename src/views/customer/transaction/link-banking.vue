@@ -33,17 +33,23 @@
               <el-input v-model="info_transaction.receiver_account_number" name="receiver_account_number" placeholder="Nhập số tài khoản" type="text" @blur="fetchReceiverInfo" />
             </el-form-item>
             <el-form-item label="Ngân hàng: ">
-              <el-select v-model="saved_receiver_account_number" placeholder="Chọn tên ngân hàng" clearable class="filter-item">
+              <el-select v-model="info_transaction.bank_receiver" placeholder="Chọn tên ngân hàng" clearable class="filter-item">
                 <el-option
-                  v-for="([key, text]) in Object.entries(bank_link)"
-                  :key="key"
-                  :label="text"
-                  :value="key"
+                  v-for="(item, index) in listLinkBanking"
+                  :key="index"
+                  :label="item.name"
+                  :value="item._id"
                 />
               </el-select>
             </el-form-item>
             <el-form-item label="Tên người hưởng: ">
               <el-input v-model="info_transaction.receiver_name" placeholder="Tên người hưởng" type="text" disabled />
+            </el-form-item>
+            <el-form-item label="Lưu người hưởng: ">
+              <el-checkbox v-model="saveInfoReceiver" />
+            </el-form-item>
+            <el-form-item v-if="saveInfoReceiver" label="Tên gợi nhớ: ">
+              <el-input v-model="receiver_nickname" placeholder="Nhập tên gợi nhớ" type="text" />
             </el-form-item>
           </el-form>
           <div class="sub-title">Thông tin giao dịch: </div>
@@ -58,7 +64,7 @@
               <el-input :value="info_transaction.billing_cost | toThousandFilter" placeholder="Nhập nội dung chuyển tiền" disabled type="text" />
             </el-form-item>
             <el-form-item label="Người chịu phí: ">
-              <el-select v-model="info_transaction.bank_receiver" placeholder="Người chuyển trả" class="filter-item">
+              <el-select v-model="info_transaction.type_settle" placeholder="Người chuyển trả" class="filter-item">
                 <el-option
                   v-for="([key, text]) in Object.entries(fee_payer)"
                   :key="key"
@@ -95,7 +101,7 @@
 import { mapState } from 'vuex'
 
 export default {
-  name: 'Profile',
+  name: 'LinkBanking',
   data() {
     const validateMinDepositMoney = (rule, value, callback) => {
       if (value < 10000) {
@@ -108,15 +114,11 @@ export default {
 
     return {
       saved_receiver_account_number: '',
+      saveInfoReceiver: false,
       receiver_nickname: '',
       fee_payer: {
         '0': 'Người chuyển trả',
         '1': 'Người nhận trả'
-      },
-      bank_link: {
-        '0': 'Ngân hàng nhóm A',
-        '1': 'Ngân hàng TMCP B',
-        '2': 'Ngân hàng TMCP C'
       },
       info_transaction: {
         receiver_account_number: '',
@@ -150,8 +152,9 @@ export default {
   computed: {
     ...mapState({
       accounts: state => state.bankAccount.list,
-      targetAccount: state => state.bankAccount.targetAccount,
       listReceiver: state => state.bankAccount.listReceiver,
+      targetAccount: state => state.bankAccount.targetAccount,
+      listLinkBanking: state => state.linkBanking.list,
       curTransaction: state => state.transfer.curTransaction
     }),
     paymentAccount() {
@@ -167,7 +170,6 @@ export default {
       if (this.targetAccount) {
         this.info_transaction.receiver_account_number = this.targetAccount.account_number
         this.info_transaction.receiver_name = this.targetAccount.customer_name
-        this.info_transaction.bank_receiver = this.targetAccount.account_bank
 
         this.$refs.receiverForm.clearValidate('receiver_account_number')
         return
@@ -181,7 +183,6 @@ export default {
       if (receiver) {
         this.info_transaction.receiver_account_number = receiver.account_number
         this.info_transaction.receiver_name = receiver.name
-        this.info_transaction.bank_receiver = receiver.bank
         this.receiver_nickname = receiver.nickname
 
         this.$refs.receiverForm.clearValidate('receiver_account_number')
@@ -193,21 +194,22 @@ export default {
   },
   mounted() {
     this.$store.dispatch('bankAccount/getList', { type: 1 }) // only get payment account
+    this.$store.dispatch('linkBanking/getList')
     this.$store.dispatch('bankAccount/getListReceiver')
   },
   methods: {
     clearReceiverForm() {
       this.info_transaction.receiver_account_number = ''
       this.info_transaction.receiver_name = ''
-      this.info_transaction.bank_receiver = ''
       this.receiver_nickname = ''
 
       this.$refs.receiverForm.clearValidate('receiver_account_number')
     },
     async fetchReceiverInfo() {
       if (this.info_transaction.receiver_account_number) {
-        this.$store.dispatch('bankAccount/getTargetPaymentAccount', {
-          account_number: this.info_transaction.receiver_account_number
+        this.$store.dispatch('bankAccount/getLinkTargetPaymentAccount', {
+          account_number: this.info_transaction.receiver_account_number,
+          bank_id: this.info_transaction.bank_receiver
         })
       }
     },
@@ -267,7 +269,7 @@ export default {
         if (this.receiver_nickname && !this.saved_receiver_account_number) {
           this.$store.dispatch('bankAccount/saveNewReceiver', {
             account_number: this.info_transaction.receiver_account_number,
-            bank: 'HPK',
+            bank_id: 'HPK',
             nickname: this.receiver_nickname
           })
         }
