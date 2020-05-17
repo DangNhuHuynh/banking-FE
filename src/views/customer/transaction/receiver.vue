@@ -9,7 +9,7 @@
       <CollapseWrapper :id="'collapse'" class="collapse-wrapper">
         <el-form ref="receiverForm" :rules="rules" :model="receiver_form" class="postInfo-container" style="margin-top: 15px">
           <el-row>
-            <el-col :span="9">
+            <el-col :span="7">
               <el-form-item
                 label-width="130px"
                 label="Số tài khoản:"
@@ -20,18 +20,27 @@
               </el-form-item>
             </el-col>
 
-            <el-col :span="9">
+            <el-col :span="7">
               <el-form-item label-width="180px" label="Tên gợi nhớ: " class="postInfo-container-item" prop="nickname">
                 <el-input v-model="receiver_form.nickname" placeholder="Nhập tên gợi nhớ" name="nickname" />
               </el-form-item>
             </el-col>
-            <el-col :span="6">
-              <el-form-item label-width="100px" class="postInfo-container-item">
-                <el-button style="width:100px" type="primary" @click="createReceiver">Thêm</el-button>
+            <el-col :span="8">
+              <el-form-item label-width="180px" label="Ngân hàng: ">
+                <el-select v-model="receiver_form.bank_receiver" placeholder="Chọn tên ngân hàng" clearable class="filter-item">
+                  <el-option
+                    v-for="(item, index) in listLinkBanking"
+                    :key="index"
+                    :label="item.name"
+                    :value="item._id"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
-
           </el-row>
+          <div class="text-center">
+            <el-button style="width:100px;margin-left:0" type="primary" @click="createReceiver">Thêm</el-button>
+          </div>
         </el-form>
       </CollapseWrapper>
     </div>
@@ -65,7 +74,8 @@ export default {
     return {
       receiver_form: {
         account_number: '',
-        nickname: ''
+        nickname: '',
+        bank_receiver: ''
       },
       rules: {
         account_number: [{ required: true, message: 'Vui lòng nhập số tài khoản', trigger: 'blur' }],
@@ -76,13 +86,15 @@ export default {
   },
   computed: {
     ...mapState({
-      listReceiver: state => state.bankAccount.listReceiver
+      listReceiver: state => state.bankAccount.listReceiver,
+      listLinkBanking: state => state.linkBanking.list
     })
   },
   async mounted() {
     this.isLoading = true
     await this.$store.dispatch('bankAccount/getListReceiver')
     this.isLoading = false
+    this.$store.dispatch('linkBanking/getList')
   },
   methods: {
     async createReceiver() {
@@ -174,5 +186,10 @@ export default {
 /deep/ .el-input--medium.el-input--suffix #select {
   font-size: 18px;
   height: 50px;
+}
+
+.create-button {
+  display: flex;
+  align-items: center;
 }
 </style>

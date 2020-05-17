@@ -10,8 +10,7 @@
         align="right"
         start-placeholder="Start Date"
         end-placeholder="End Date"
-      >
-      </el-date-picker>
+      />
     </div>
     <el-table
       :data="listData"
@@ -67,7 +66,7 @@
           </el-tag>
         </template>
       </el-table-column>
-          <el-table-column label="Chữ ký" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="Chữ ký" align="center" class-name="small-padding fixed-width">
         <template>
           <!-- <span></span> -->
         </template>
