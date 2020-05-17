@@ -22,7 +22,7 @@
             <el-form-item label="Tìm kiếm: ">
               <el-select v-model="saved_receiver_account_number" placeholder="Chọn người nhận đã lưu" clearable class="filter-item">
                 <el-option
-                  v-for="item in listReceiver"
+                  v-for="item in filteredListReceiver"
                   :key="item.account_number"
                   :label="item.nickname"
                   :value="item.account_number"
@@ -157,6 +157,9 @@ export default {
       listLinkBanking: state => state.linkBanking.list,
       curTransaction: state => state.transfer.curTransaction
     }),
+    filteredListReceiver() {
+      return this.listReceiver.filter(item => item.bank !== 'HPK')
+    },
     paymentAccount() {
       if (!this.accounts.length) {
         return {}
@@ -170,6 +173,7 @@ export default {
       if (this.targetAccount) {
         this.info_transaction.receiver_account_number = this.targetAccount.account_number
         this.info_transaction.receiver_name = this.targetAccount.customer_name
+        // this.info_transaction.bank_receiver = this.targetAccount.bank
 
         this.$refs.receiverForm.clearValidate('receiver_account_number')
         return
@@ -183,9 +187,11 @@ export default {
       if (receiver) {
         this.info_transaction.receiver_account_number = receiver.account_number
         this.info_transaction.receiver_name = receiver.name
+        this.info_transaction.bank_receiver = receiver.bank
         this.receiver_nickname = receiver.nickname
 
         this.$refs.receiverForm.clearValidate('receiver_account_number')
+        this.fetchReceiverInfo()
         return
       }
 
@@ -269,7 +275,7 @@ export default {
         if (this.receiver_nickname && !this.saved_receiver_account_number) {
           this.$store.dispatch('bankAccount/saveNewReceiver', {
             account_number: this.info_transaction.receiver_account_number,
-            bank_id: 'HPK',
+            bank_id: this.info_transaction.bank_receiver,
             nickname: this.receiver_nickname
           })
         }
