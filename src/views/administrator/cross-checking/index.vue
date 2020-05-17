@@ -55,17 +55,7 @@
           <!-- <span></span> -->
         </template>
       </el-table-column>
-      <el-table-column label="Tiền thanh toán (VND)" min-width="100px" align="center" class-name="fixed-width">
-        <template>
-          <!-- <span></span> -->
-        </template>
-      </el-table-column>
-      <el-table-column label="Tiền tham chiếu (VND)" min-width="100px" align="center" class-name=" fixed-width">
-        <template>
-          <!-- <span></span> -->
-        </template>
-      </el-table-column>
-      <el-table-column label="Chiết khấu" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="Số tiền (VND)" min-width="100px" align="center" class-name="fixed-width">
         <template>
           <!-- <span></span> -->
         </template>
@@ -75,6 +65,11 @@
           <el-tag :type="tag_types[row.status]">
             {{ status[row.status] }}
           </el-tag>
+        </template>
+      </el-table-column>
+          <el-table-column label="Chữ ký" align="center" class-name="small-padding fixed-width">
+        <template>
+          <!-- <span></span> -->
         </template>
       </el-table-column>
     </el-table>
