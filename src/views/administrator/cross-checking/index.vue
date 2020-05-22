@@ -1,8 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container" style="display: flex;">
-      <el-select placeholder="Chọn ngân hàng" clearable style="width: 240px; margin-right: 20px;" class="filter-item">
-        <el-option />
+      <el-select v-model="bank_id" placeholder="Chọn ngân hàng" clearable style="width: 240px; margin-right: 20px;" class="filter-item">
+        <el-option
+          v-for="(item, index) in listLinkBanking"
+          :key="index"
+          :label="item.name"
+          :value="item._id"
+        />
       </el-select>
       <el-date-picker
         v-model="date"
@@ -79,14 +84,11 @@ export default {
     dot
   },
   data() {
+    const now = new Date()
+    const sevenDays = 24 * 60 * 60 * 1000 * 7
     return {
-      date: [new Date(), new Date()],
-      value1: new Date(),
-      listData: [
-        {
-          status: '1'
-        }
-      ],
+      date: [new Date(now.getTime() - sevenDays), new Date()],
+      bank_id: null,
       status: {
         '0': 'Chưa thanh toán',
         '1': 'Đã thanh toán',
@@ -101,11 +103,30 @@ export default {
   },
   computed: {
     ...mapState({
-      transactions: state => state.crossChecking.transactions
+      transactions: state => state.crossChecking.transactions,
+      listLinkBanking: state => state.linkBanking.list
     })
   },
+  watch: {
+    date() {
+      this.getData()
+    },
+    bank_id() {
+      this.getData()
+    }
+  },
   mounted() {
-    this.$store.dispatch('crossChecking/getList')
+    this.getData()
+    this.$store.dispatch('linkBanking/getList')
+  },
+  methods: {
+    getData() {
+      this.$store.dispatch('crossChecking/getList', {
+        start: this.date[0].getTime(),
+        end: this.date[1].getTime(),
+        bank_id: this.bank_id
+      })
+    }
   }
 }
 </script>
