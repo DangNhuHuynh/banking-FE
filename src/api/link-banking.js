@@ -9,3 +9,11 @@ export function getList(input) {
     params: input
   })
 }
+
+export function getListTransactions(input) {
+  return request({
+    url: apiUrl + '/link_banking/transaction',
+    method: 'get',
+    params: input
+  })
+}
