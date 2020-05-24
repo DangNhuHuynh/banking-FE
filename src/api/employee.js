@@ -18,11 +18,11 @@ export function create_payment_account(data) {
   })
 }
 
-export function transfer_money(input) {
+export function transfer_money(data) {
   return request({
     url: apiUrl + '/transfer_money/deposit',
     method: 'post',
-    params: input
+    data
   })
 }
 

@@ -10,6 +10,21 @@ export function getList(input) {
   })
 }
 
+export function removeAccount(input) {
+  return request({
+    url: apiUrl + '/account/' + input.account_number,
+    method: 'delete'
+  })
+}
+
+export function transferAndRemoveAccount(data) {
+  return request({
+    url: apiUrl + '/account/transfer_and_delete',
+    method: 'post',
+    data
+  })
+}
+
 export function getTargetPaymentAccount(input) {
   return request({
     url: apiUrl + '/account/' + input.account_number,

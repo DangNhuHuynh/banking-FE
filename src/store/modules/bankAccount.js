@@ -1,4 +1,4 @@
-import { getList, getTargetPaymentAccount, getLinkTargetPaymentAccount, getListReceiver, saveNewReceiver } from '@/api/bank-account'
+import { getList, removeAccount, transferAndRemoveAccount, getTargetPaymentAccount, getLinkTargetPaymentAccount, getListReceiver, saveNewReceiver } from '@/api/bank-account'
 
 const state = {
   list: [],
@@ -78,6 +78,40 @@ const actions = {
 
         commit('PUSH_NEW_RECEIVER', data.data)
         resolve()
+      }).catch(error => {
+        error.message = error.response.data
+          ? error.response.data.message || error.message
+          : error.message
+        reject(error)
+      })
+    })
+  },
+  deleteAccount({ commit, dispatch }, input) {
+    return new Promise((resolve, reject) => {
+      removeAccount(input).then(async response => {
+        if (response && response.status === 200) {
+          await dispatch('getList')
+          resolve()
+          return
+        }
+        reject()
+      }).catch(error => {
+        error.message = error.response.data
+          ? error.response.data.message || error.message
+          : error.message
+        reject(error)
+      })
+    })
+  },
+  transferAndRemoveAccount({ commit, dispatch }, input) {
+    return new Promise((resolve, reject) => {
+      transferAndRemoveAccount(input).then(async response => {
+        if (response && response.status === 200) {
+          await dispatch('getList')
+          resolve()
+          return
+        }
+        reject()
       }).catch(error => {
         error.message = error.response.data
           ? error.response.data.message || error.message

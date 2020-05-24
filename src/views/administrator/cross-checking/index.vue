@@ -85,9 +85,9 @@ export default {
   },
   data() {
     const now = new Date()
-    const sevenDays = 24 * 60 * 60 * 1000 * 7
+    const oneMonth = 24 * 60 * 60 * 1000 * 30
     return {
-      date: [new Date(now.getTime() - sevenDays), new Date()],
+      date: [new Date(now.getTime() - oneMonth), new Date()],
       bank_id: null,
       status: {
         '0': 'Chưa thanh toán',

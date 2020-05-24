@@ -7,7 +7,7 @@
           <div class="sub-title">Thông tin người chuyển </div>
           <el-form label-position="left" label-width="200px" style="margin:0 50px;" :disabled="!isCreatingNewRequest">
             <el-form-item label="Tài khoản nguồn: ">
-              <el-select :value="paymentAccount.account_number" placeholder="Số tài khoản" name="account_number" readonly>
+              <el-select v-model="info_transaction.remitter_account_number" placeholder="Số tài khoản" name="account_number" readonly>
                 <el-option v-for="item in accounts" :key="item.account_number" :label="item.account_number" :value="item.account_number" />
               </el-select>
             </el-form-item>
@@ -121,6 +121,7 @@ export default {
         '1': 'Người nhận trả'
       },
       info_transaction: {
+        remitter_account_number: '',
         receiver_account_number: '',
         receiver_name: '',
         bank_receiver: '',
@@ -161,14 +162,19 @@ export default {
       return this.listReceiver.filter(item => item.bank !== 'HPK')
     },
     paymentAccount() {
-      if (!this.accounts.length) {
+      if (!this.info_transaction.remitter_account_number) {
         return {}
       }
 
-      return this.accounts[0]
+      return this.accounts.find(account => account.account_number === this.info_transaction.remitter_account_number)
     }
   },
   watch: {
+    accounts() {
+      if (this.accounts.length) {
+        this.info_transaction.remitter_account_number = this.accounts[0].account_number
+      }
+    },
     targetAccount() {
       if (this.targetAccount) {
         this.info_transaction.receiver_account_number = this.targetAccount.account_number
@@ -232,17 +238,27 @@ export default {
     },
     async sendNewTransferRequest() {
       this.submitNewRequestLoading = true
-      await this.$store.dispatch('transfer/newTransferRequest', this.info_transaction)
+      try {
+        await this.$store.dispatch('transfer/newTransferRequest', this.info_transaction)
 
-      this.$notify({
-        title: 'Success',
-        message: 'Tạo lệnh chuyển tiền thành công, mã xác thực OTP đã được gửi vào email của bạn.',
-        type: 'success',
-        duration: 4000
-      })
+        this.$notify({
+          title: 'Success',
+          message: 'Tạo lệnh chuyển tiền thành công, mã xác thực OTP đã được gửi vào email của bạn.',
+          type: 'success',
+          duration: 4000
+        })
 
-      this.isCreatingNewRequest = false
-      this.isWaitingForConfirmOTP = true
+        this.isCreatingNewRequest = false
+        this.isWaitingForConfirmOTP = true
+      } catch (e) {
+        this.$notify({
+          title: 'Fail',
+          message: e.message,
+          type: 'error',
+          duration: 4000
+        })
+        this.submitNewRequestLoading = false
+      }
     },
     async confirmOTP() {
       this.submitOTPLoading = true
