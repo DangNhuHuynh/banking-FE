@@ -10,6 +10,14 @@ export function create_customer(data) {
   })
 }
 
+export function create_payment_account(data) {
+  return request({
+    url: apiUrl + '/account/' + data.email,
+    method: 'post',
+    data
+  })
+}
+
 export function transfer_money(input) {
   return request({
     url: apiUrl + '/transfer_money/deposit',

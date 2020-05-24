@@ -1,4 +1,4 @@
-import { create_customer, transfer_money, get_receive_transaction, get_remit_transaction, get_debt_transaction } from '@/api/employee'
+import { create_customer, create_payment_account, transfer_money, get_receive_transaction, get_remit_transaction, get_debt_transaction } from '@/api/employee'
 
 const state = {
   customerList: [],
@@ -33,6 +33,20 @@ const actions = {
         if (response && response.status === 200) {
           commit('ADD_CUSTOMER', { ...data.data })
           commit('ADD_PAYMENT_ACCOUNT', { ...data.data.payment_account })
+          resolve(data.data)
+          return
+        }
+        reject()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  addPaymentAccount({ commit }, input) {
+    return new Promise((resolve, reject) => {
+      create_payment_account(input).then(response => {
+        const { data } = response
+        if (response && response.status === 200) {
           resolve(data.data)
           return
         }

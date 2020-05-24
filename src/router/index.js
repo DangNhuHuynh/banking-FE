@@ -72,6 +72,12 @@ export const asyncRoutes = [
         component: () => import('@/views/employee/create-account'),
         name: 'create',
         meta: { title: 'Tạo tài khoản' }
+      },
+      {
+        path: '/create-payment-account',
+        component: () => import('@/views/employee/create-payment-account'),
+        name: 'create',
+        meta: { title: 'Tạo tài khoản thanh toán' }
       }
     ]
   },
