@@ -45,7 +45,22 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:45px;" @click.native.prevent="handleLogin">Login</el-button>
+      <div class="g-recaptcha" data-sitekey="6LcqEvwUAAAAAH5Hrsxy74qkqXlbA2TgT7FnMAbw" />
+      <p
+        v-if="hasCaptchaError"
+        class="captcha-error"
+      >
+        Vui lòng tích vào đây!
+      </p>
+      <el-button
+        :loading="loading"
+        class="submit-btn"
+        type="primary"
+        style="width:100%;margin-bottom:45px;"
+        @click.native.prevent="handleLogin"
+      >
+        Login
+      </el-button>
 
       <div style="position:relative">
         <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
@@ -98,6 +113,7 @@ export default {
         username: [{ required: true, trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
+      hasCaptchaError: false,
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
@@ -148,10 +164,21 @@ export default {
       })
     },
     handleLogin() {
+      const reCaptchaResponse = window.grecaptcha.getResponse()
+      if (!reCaptchaResponse) {
+        this.hasCaptchaError = true
+        return
+      }
+
+      this.hasCaptchaError = false
+
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
+          this.$store.dispatch('user/login', {
+            ...this.loginForm,
+            recaptcha_token: reCaptchaResponse
+          })
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
@@ -234,6 +261,16 @@ $cursor: #fff;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
+  }
+  .submit-btn {
+    margin-top: 30px;
+  }
+  .captcha-error {
+    margin-top: 5px;
+    color: #ff4949;
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 4px;
   }
 }
 </style>
