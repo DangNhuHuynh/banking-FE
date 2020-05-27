@@ -33,7 +33,7 @@
               <el-input v-model="info_transaction.receiver_account_number" name="receiver_account_number" placeholder="Nhập số tài khoản" type="text" @blur="fetchReceiverInfo" />
             </el-form-item>
             <el-form-item label="Ngân hàng: ">
-              <el-select v-model="info_transaction.bank_receiver" placeholder="Chọn tên ngân hàng" clearable class="filter-item">
+              <el-select v-model="info_transaction.bank_receiver" placeholder="Chọn tên ngân hàng" clearable class="filter-item" @change="fetchReceiverInfo">
                 <el-option
                   v-for="(item, index) in listLinkBanking"
                   :key="index"
@@ -218,7 +218,7 @@ export default {
       this.$refs.receiverForm.clearValidate('receiver_account_number')
     },
     async fetchReceiverInfo() {
-      if (this.info_transaction.receiver_account_number) {
+      if (this.info_transaction.receiver_account_number && this.info_transaction.bank_receiver) {
         this.$store.dispatch('bankAccount/getLinkTargetPaymentAccount', {
           account_number: this.info_transaction.receiver_account_number,
           bank_id: this.info_transaction.bank_receiver
